@@ -1,39 +1,35 @@
 import requests
 from scenario_model import Scenario
 from patch_model import VehiclesUpdate, OneVehicleUpdate
+from initialise_scenario import init_scenario
+import time
 
-url1 = 'http://localhost:8080/scenario/create'
-params1 = {'numberOfVehicles': 5, 'numberOfCustomers': 10}
-response = requests.post(url1, params=params1)
-scenario = Scenario.parse_obj(response.json())
-print("Scenario created successfully.") if response.status_code == 200 else None
-
-
-url2 = f"http://localhost:8090/Scenarios/initialize_scenario?db_scenario_id={scenario.id}"
-response = requests.post(url2, json={})
-print("Scenario initialized successfully.") if response.status_code == 200 else None
+scenario, scenario_start_time = init_scenario(0.01)
     
-
-url3 = f'http://localhost:8090/Runner/launch_scenario/{scenario.id}?speed=1'
-response = requests.post(url3)
-print("Scenario launched successfully.") if response.status_code == 200 else None
+start_time = time.perf_counter()
+get_url = f'http://localhost:8090/Scenarios/get_scenario/{scenario.id}'
+update_url = f"http://localhost:8090/Scenarios/update_scenario/{scenario.id}"
+currently_serivced = []
+cars = VehiclesUpdate(vehicles=[])
+while scenario.status != "COMPLETED":
+    response = requests.get(get_url)
+    scenario = Scenario.parse_obj(response.json())
+    for car in scenario.vehicles:
+        if car.isAvailable:
+            for customer in scenario.customers:
+                if customer.awaitingService and customer.id not in currently_serivced:
+                    currently_serivced.append(customer.id)
+                    customer.awaitingService = False
+                    cars.vehicles.append(OneVehicleUpdate(id=car.id, customerId=customer.id))
+                    break
+    print(cars.dict())
+    requests.put(update_url, json=cars.dict())
+    cars = VehiclesUpdate(vehicles=[])
+    time.sleep(2)
     
-    
-
-url4 = f"http://localhost:8090/Scenarios/update_scenario/{scenario.id}"
-for vehicle in scenario.vehicles:
-    for customer in scenario.customers:
-        if customer.awaitingService:
-            customer_id = customer.id
-            customer.awaitingService = False
-    cars = VehiclesUpdate(vehicles=[OneVehicleUpdate(id=vehicle.id, customerId=customer_id)])
-
-    payload = {"vehicles": cars.dict()}
-    response = requests.put(url4, json=payload)
-
-    print(f"Vehicles were updated successfully.") if response.status_code == 200 else None
-        
-
-url5 = f'http://localhost:8090/Scenarios/get_scenario/{scenario.id}'
-response = requests.get(url4)
-print(response.json()) if response.status_code == 200 else None
+print("completed")
+end_time = time.perf_counter()
+elapsed_time = end_time - start_time
+print(f"Elapsed time: {elapsed_time} seconds")
+print(f"Start time:{scenario_start_time}")
+print(f"End time:{scenario.endTime}")
