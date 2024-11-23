@@ -1,15 +1,8 @@
 from scenario_model import Scenario
 from pathlib import Path
-import math
+
 
 scenario = Scenario.parse_file((Path(__file__).parent / "example.json"))
-
-
-def euclidean_distance(coord1, coord2):
-    # Calculate Euclidean distance between two coordinates
-    x1, y1 = coord1
-    x2, y2 = coord2
-    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
 
 
 def process_customers(
