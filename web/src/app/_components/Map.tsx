@@ -61,7 +61,7 @@ const Map = ({ zoom = defaults.zoom, center, vehicles, onMapClick, onVehicleDele
           return (
             <Marker
               key={vehicle.id}
-              position={[vehicle.coordY, vehicle.coordX]}
+              position={[vehicle.coordX, vehicle.coordY]}
               icon={robotaxiIcon}
               eventHandlers={{
                 contextmenu: (e) => {

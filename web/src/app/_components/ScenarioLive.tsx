@@ -51,7 +51,7 @@ export function ScenarioLive({ scenario }: { scenario: Scenario }) {
 
   // Connect to SSE endpoint
   useEffect(() => {
-    const eventSource = new EventSource('/api/scenario/vehicles');
+    const eventSource = new EventSource(`/api/scenario/vehicles?scenarioID=${scenario.id}`);
     eventSourceRef.current = eventSource;
 
     eventSource.onmessage = (event) => {
@@ -84,7 +84,7 @@ export function ScenarioLive({ scenario }: { scenario: Scenario }) {
         cancelAnimationFrame(animationFrameRef.current);
       }
     };
-  }, [startAnimation]);
+  }, [startAnimation, scenario.id]);
 
   return (
     <ClientMap 

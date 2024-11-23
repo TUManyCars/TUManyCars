@@ -1,38 +1,69 @@
+import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
+import Scenario from '~/types/Scenario';
+import Vehicle from '~/types/Vehicle';
 
-const initialMarkers = [
-  { id: "1", lat: 48.13515, lng: 11.5825 },
-  { id: "2", lat: 48.13525, lng: 11.5827 },
-];
-
-function updateMarkerPositions(markers: typeof initialMarkers) {
-  return markers.map(marker => ({
-    ...marker,
-    lat: marker.lat + (Math.random() - 0.5) * 0.0008,
-    lng: marker.lng + (Math.random() - 0.5) * 0.0008,
-  }));
+/**
+ * Fetches the vehicles for a given scenario ID.
+ * 
+ * @param scenarioID The ID of the scenario to fetch vehicles for.
+ * @returns A promise that resolves to an array of vehicles.
+ */
+async function fetchScenarioVehicles(scenarioID: string): Promise<Vehicle[]> {
+  try {
+    console.log('Updating markers for scenario:', scenarioID);
+    const response = await axios.get<Scenario>(`http://localhost:8090/Scenarios/get_scenario/${scenarioID}`);
+    const scenario = response.data;
+    if (!scenario) {
+      console.error('Scenario not found:', scenarioID);
+      return [];
+    }
+    console.log(scenario.vehicles);
+    return scenario.vehicles;
+  } catch {
+    console.error("No connection");
+    return [];
+  }
 }
 
+/**
+ * Handles GET requests to the route.
+ * 
+ * @param request The NextRequest object.
+ * @returns A promise that resolves to a NextResponse object.
+ */
 export async function GET(request: NextRequest) {
   const encoder = new TextEncoder();
-  let markers = [...initialMarkers];
+  let vehicles: Vehicle[] = [];
+  const scenarioID = request.nextUrl.searchParams.get('scenarioID');
+
+  if (!scenarioID) {
+    return new NextResponse('Scenario ID is required', { status: 400 });
+  }
 
   const stream = new ReadableStream({
-    start(controller) {
-      const sendMarkers = () => {
-        markers = updateMarkerPositions(markers);
-        controller.enqueue(encoder.encode(`data: ${JSON.stringify(markers)}\n\n`));
+    async start(controller) {
+      let interval: NodeJS.Timeout | null = null;
+
+      const sendMarkers = async (scenarioID: string) => {
+          vehicles = await fetchScenarioVehicles(scenarioID);
+          if (vehicles.length === 0) {
+            if (interval) clearInterval(interval);
+            controller.close();
+            return;
+          }
+          controller.enqueue(encoder.encode(`data: ${JSON.stringify(vehicles)}\n\n`));
       };
 
       // Send initial state
-      sendMarkers();
+      await sendMarkers(scenarioID);
 
       // Update every 2 seconds
-      const interval = setInterval(sendMarkers, 2000);
+      interval = setInterval(() => void sendMarkers(scenarioID), 2000);
 
       // Cleanup
       request.signal.addEventListener('abort', () => {
-        clearInterval(interval);
+        if (interval) clearInterval(interval);
         controller.close();
       });
     }
