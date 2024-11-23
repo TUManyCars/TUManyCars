@@ -1,0 +1,153 @@
+{
+  "message": "Scenario initialised successfully",
+  "scenario": {
+    "customers": [
+      {
+        "awaitingService": true,
+        "coordX": 48.13027,
+        "coordY": 11.53888,
+        "destinationX": 48.159424,
+        "destinationY": 11.51879,
+        "id": "4c53335a-7d85-4bee-9278-8cda22157b5c"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.116196,
+        "coordY": 11.551515,
+        "destinationX": 48.144386,
+        "destinationY": 11.646213,
+        "id": "4cdafdb4-253d-49e0-b909-06371ed5e2ce"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.13007,
+        "coordY": 11.54598,
+        "destinationX": 48.15218,
+        "destinationY": 11.639027,
+        "id": "291ca010-ba0b-4721-889b-5f1107f82d22"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.165203,
+        "coordY": 11.55016,
+        "destinationX": 48.116123,
+        "destinationY": 11.552668,
+        "id": "2029ce60-2887-42b4-897d-a201e6248119"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.117542,
+        "coordY": 11.51384,
+        "destinationX": 48.162403,
+        "destinationY": 11.632823,
+        "id": "1ba8e0ab-8131-483b-b21b-a7f957be712a"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.124264,
+        "coordY": 11.548036,
+        "destinationX": 48.11951,
+        "destinationY": 11.555839,
+        "id": "0f78110e-c61a-4ae8-8c78-dd1b65ffb35a"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.15461,
+        "coordY": 11.626988,
+        "destinationX": 48.136894,
+        "destinationY": 11.523505,
+        "id": "26ca7156-48bc-4888-8250-9b0219f69e05"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.132744,
+        "coordY": 11.547781,
+        "destinationX": 48.144474,
+        "destinationY": 11.591733,
+        "id": "a65bed75-a1d1-4d4b-b66e-0a40a62b4667"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.12209,
+        "coordY": 11.536151,
+        "destinationX": 48.145935,
+        "destinationY": 11.603443,
+        "id": "d375d213-b673-4c64-a6d6-f48d69e23470"
+      },
+      {
+        "awaitingService": true,
+        "coordX": 48.129887,
+        "coordY": 11.514221,
+        "destinationX": 48.126644,
+        "destinationY": 11.571407,
+        "id": "9cc27bcd-5aa3-4baa-ba78-5ccc14ab443d"
+      }
+    ],
+    "endTime": null,
+    "id": "3e26227c-c8b6-4cd7-ad56-146ea98b90eb",
+    "startTime": null,
+    "status": "CREATED",
+    "vehicles": [
+      {
+        "activeTime": 0,
+        "coordX": 48.153347,
+        "coordY": 11.629647,
+        "customerId": null,
+        "distanceTravelled": 0,
+        "id": "68fe2412-b14f-4c0f-8628-332d4583fdee",
+        "isAvailable": true,
+        "numberOfTrips": 0,
+        "remainingTravelTime": 0,
+        "vehicleSpeed": null
+      },
+      {
+        "activeTime": 0,
+        "coordX": 48.16199,
+        "coordY": 11.55958,
+        "customerId": null,
+        "distanceTravelled": 0,
+        "id": "c5a2f350-813b-431a-98b0-3367bf8a9694",
+        "isAvailable": true,
+        "numberOfTrips": 0,
+        "remainingTravelTime": 0,
+        "vehicleSpeed": null
+      },
+      {
+        "activeTime": 0,
+        "coordX": 48.161503,
+        "coordY": 11.536511,
+        "customerId": null,
+        "distanceTravelled": 0,
+        "id": "6355f418-7d2d-4944-a0d5-c772b2b28764",
+        "isAvailable": true,
+        "numberOfTrips": 0,
+        "remainingTravelTime": 0,
+        "vehicleSpeed": null
+      },
+      {
+        "activeTime": 0,
+        "coordX": 48.159428,
+        "coordY": 11.556709,
+        "customerId": null,
+        "distanceTravelled": 0,
+        "id": "476293d9-9f58-4d7d-bee4-784963ab3e7f",
+        "isAvailable": true,
+        "numberOfTrips": 0,
+        "remainingTravelTime": 0,
+        "vehicleSpeed": null
+      },
+      {
+        "activeTime": 0,
+        "coordX": 48.152237,
+        "coordY": 11.639446,
+        "customerId": null,
+        "distanceTravelled": 0,
+        "id": "081a1ca0-f6f5-4bcf-ba25-5ecbaa8dd8ca",
+        "isAvailable": true,
+        "numberOfTrips": 0,
+        "remainingTravelTime": 0,
+        "vehicleSpeed": null
+      }
+    ]
+  }
+}

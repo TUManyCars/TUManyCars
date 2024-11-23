@@ -1,0 +1,82 @@
+[
+  {
+    "id": "49f2a7f7-4604-4f25-a098-132de6d33890",
+    "coordX": 48.130993,
+    "coordY": 11.608282,
+    "destinationX": 48.11362,
+    "destinationY": 11.605727,
+    "awaitingService": true
+  },
+  {
+    "id": "27de4407-6822-4bbe-b373-c72cc9353a76",
+    "coordX": 48.12016,
+    "coordY": 11.598855,
+    "destinationX": 48.158504,
+    "destinationY": 11.522452,
+    "awaitingService": true
+  },
+  {
+    "id": "61198c7d-5621-4818-9680-214911f52d3f",
+    "coordX": 48.15768,
+    "coordY": 11.582589,
+    "destinationX": 48.140568,
+    "destinationY": 11.62003,
+    "awaitingService": true
+  },
+  {
+    "id": "dcce5dd9-497e-46bb-a1f2-1b4d59bfd74b",
+    "coordX": 48.122574,
+    "coordY": 11.64554,
+    "destinationX": 48.119877,
+    "destinationY": 11.583936,
+    "awaitingService": true
+  },
+  {
+    "id": "97980e7f-d29a-4614-9bd9-623971bd121a",
+    "coordX": 48.165226,
+    "coordY": 11.586354,
+    "destinationX": 48.15835,
+    "destinationY": 11.620786,
+    "awaitingService": true
+  },
+  {
+    "id": "e2a930ba-eac1-42a1-8b2f-8e80f4869958",
+    "coordX": 48.161022,
+    "coordY": 11.597322,
+    "destinationX": 48.13974,
+    "destinationY": 11.62359,
+    "awaitingService": true
+  },
+  {
+    "id": "e9e27400-1443-433d-b049-e64676410d84",
+    "coordX": 48.159134,
+    "coordY": 11.583623,
+    "destinationX": 48.16267,
+    "destinationY": 11.590555,
+    "awaitingService": true
+  },
+  {
+    "id": "a70bc556-1838-49e3-8fa6-2d5e1196f0ba",
+    "coordX": 48.12216,
+    "coordY": 11.572135,
+    "destinationX": 48.115456,
+    "destinationY": 11.547049,
+    "awaitingService": true
+  },
+  {
+    "id": "0ebc08e0-b3d7-4a0f-aaec-a986c74e5336",
+    "coordX": 48.120953,
+    "coordY": 11.628803,
+    "destinationX": 48.118847,
+    "destinationY": 11.505532,
+    "awaitingService": true
+  },
+  {
+    "id": "a09170f1-2b83-4831-8d33-d157975d4f5a",
+    "coordX": 48.15584,
+    "coordY": 11.597081,
+    "destinationX": 48.136948,
+    "destinationY": 11.626384,
+    "awaitingService": true
+  }
+]
