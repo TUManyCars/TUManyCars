@@ -19,7 +19,7 @@ def restart_and_wait_for_service(compose_file_path):
             stderr=subprocess.PIPE,
         )
         subprocess.run(
-            ["docker-compose", "-f", compose_file_path, "up", "-d"],
+            ["docker-compose", "-f", compose_file_path, "up", "-d", "--build"],
             check=True,
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
