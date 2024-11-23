@@ -56,7 +56,9 @@ def add_pickup_delivery_constraints(routing: RoutingModel, pickup_delivery_pairs
         )
 
 
-def add_max_capacity_per_vehicle(routing: RoutingModel, vehicle_capacities: list[int]):
+def add_max_overall_capacity_per_vehicle(
+    routing: RoutingModel, vehicle_capacities: list[int]
+):
     """Adds the capacity dimension to the routing model."""
 
     def demand_callback(index):
@@ -77,25 +79,12 @@ def add_max_capacity_per_vehicle(routing: RoutingModel, vehicle_capacities: list
 def minimize_largest_end_time(routing: RoutingModel):
     """Adds a time dimension and sets an objective to minimize the largest end time."""
     time_dimension = routing.GetDimensionOrDie("Time")
-    # # Create a variable to track the maximum end time
-    # max_end_time = routing.solver().IntVar(0, 10000, "MaxEndTime")
-    # # Collect end times for all vehicles
-    # end_nodes = [routing.End(i) for i in range(routing.vehicles())]
-    # end_times = [time_dimension.CumulVar(end_node) for end_node in end_nodes]
-    # # Set max_end_time to be the maximum of all end times
-    # if not isinstance(end_times, list) or not all(
-    #     isinstance(var, IntVar) for var in end_times
-    # ):
-    #     raise ValueError("end_times must be a list of IntVar objects.")
-
-    # # Set the objective to minimize the maximum end time
-    # routing.solver().AddObjective(max_end_time)
     time_dimension.SetGlobalSpanCostCoefficient(100)
-    return time_dimension  # , max_end_time
+    return time_dimension
 
 
-def set_penalty_for_waiting(routing: RoutingModel):
-    def waiting_time_callback(from_index, to_index):
+def set_penalty_for_waiting_at_start(routing: RoutingModel):
+    def waiting_time_callback(from_index, _):
         """Return a penalty for waiting."""
         # Waiting time is the time spent at the start without moving
         return 0 if routing.IsEnd(from_index) else 1

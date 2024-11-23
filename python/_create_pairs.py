@@ -1,8 +1,4 @@
 from scenario_model import Scenario
-from pathlib import Path
-
-
-scenario = Scenario.parse_file((Path(__file__).parent / "example.json"))
 
 
 def process_customers(
@@ -21,8 +17,3 @@ def process_customers(
 
         precedence_pairs.append((current_index, current_index + 1))
     return locations, precedence_pairs
-
-
-locations, precedence_pairs = process_customers(scenario)
-print("Locations:", locations)
-print("Precedence Pairs:", precedence_pairs)
