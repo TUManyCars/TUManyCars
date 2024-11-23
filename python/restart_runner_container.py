@@ -29,4 +29,4 @@ def restart_and_wait_for_service(compose_file_path):
     except subprocess.CalledProcessError as e:
         print(f"An error occurred: {e.stderr.decode()}")
         raise RuntimeError("Failed to execute docker-compose commands.")
-    time.sleep(10)
+    time.sleep(15)

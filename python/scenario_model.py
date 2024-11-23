@@ -1,6 +1,7 @@
 from pydantic import BaseModel
 from typing import List, Optional
 
+
 class Vehicle(BaseModel):
     id: str
     coordX: float
@@ -13,6 +14,7 @@ class Vehicle(BaseModel):
     activeTime: Optional[float] = None
     numberOfTrips: Optional[int] = None
 
+
 class Customer(BaseModel):
     id: str
     coordX: float
@@ -20,6 +22,7 @@ class Customer(BaseModel):
     destinationX: float
     destinationY: float
     awaitingService: bool
+
 
 class Scenario(BaseModel):
     id: str
