@@ -2,29 +2,14 @@ from ortools.constraint_solver.pywrapcp import RoutingModel, RoutingIndexManager
 import math
 
 
-def euclidean_distance(coord1, coord2):
+def euclidean_distance(coord1, coord2) -> int:
     # Calculate Euclidean distance between two coordinates
     x1, y1 = coord1
     x2, y2 = coord2
-    return math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)
-
-
-def time_callback(
-    manager: RoutingIndexManager, from_index: int, to_index: int, locations
-):
-    """Returns the travel time between two nodes.
-
-    For TRACKING RESOURCE CONSUMPTION.
-    """
-    # if to_index == dummy_end:
-    #     return 0
-    from_node = manager.IndexToNode(from_index)
-    to_node = manager.IndexToNode(to_index)
-    speed_factor = 15  # adjust based on your scenario
-    travel_time = (
-        euclidean_distance(locations[from_node], locations[to_node]) / speed_factor
-    )
-    return travel_time
+    distance_in_meters = (math.sqrt((x2 - x1) ** 2 + (y2 - y1) ** 2)) * 111000
+    time_in_sec = distance_in_meters / 4.5
+    time_in_min = time_in_sec / 60
+    return round(time_in_min)
 
 
 def create_time_dimension(
@@ -34,11 +19,15 @@ def create_time_dimension(
 ):
     """Adds the time dimension to the routing model and returns it."""
 
-    time_callback_index = routing.RegisterTransitCallback(
-        lambda from_index, to_index: time_callback(
-            manager, from_index, to_index, locations
-        )
-    )
+    def time_callback(from_index, to_index):
+        """Returns the travel time between the two nodes."""
+        # Convert from routing variable Index to actual node index
+        from_node = manager.IndexToNode(from_index)
+        to_node = manager.IndexToNode(to_index)
+        time = euclidean_distance(locations[from_node], locations[to_node])
+        return time
+
+    time_callback_index = routing.RegisterTransitCallback(time_callback)
     routing.AddDimension(
         time_callback_index,
         slack_max=0,  # No slack time
@@ -88,14 +77,40 @@ def add_max_capacity_per_vehicle(routing: RoutingModel, vehicle_capacities: list
 def minimize_largest_end_time(routing: RoutingModel):
     """Adds a time dimension and sets an objective to minimize the largest end time."""
     time_dimension = routing.GetDimensionOrDie("Time")
-    # Create a variable to track the maximum end time
+    # # Create a variable to track the maximum end time
     # max_end_time = routing.solver().IntVar(0, 10000, "MaxEndTime")
     # # Collect end times for all vehicles
     # end_nodes = [routing.End(i) for i in range(routing.vehicles())]
     # end_times = [time_dimension.CumulVar(end_node) for end_node in end_nodes]
     # # Set max_end_time to be the maximum of all end times
-    # routing.solver().AddMaxEquality(max_end_time, end_times)
+    # if not isinstance(end_times, list) or not all(
+    #     isinstance(var, IntVar) for var in end_times
+    # ):
+    #     raise ValueError("end_times must be a list of IntVar objects.")
+
     # # Set the objective to minimize the maximum end time
-    # routing.solver().Minimize(max_end_time)
+    # routing.solver().AddObjective(max_end_time)
     time_dimension.SetGlobalSpanCostCoefficient(100)
     return time_dimension  # , max_end_time
+
+
+def set_penalty_for_waiting(routing: RoutingModel):
+    def waiting_time_callback(from_index, to_index):
+        """Return a penalty for waiting."""
+        # Waiting time is the time spent at the start without moving
+        return 0 if routing.IsEnd(from_index) else 1
+
+    waiting_time_index = routing.RegisterTransitCallback(waiting_time_callback)
+
+    # Add a waiting time dimension
+    routing.AddDimension(
+        waiting_time_index,
+        slack_max=0,  # No additional slack
+        capacity=10000,  # Large enough capacity
+        fix_start_cumul_to_zero=True,
+        name="WaitingTime",
+    )
+
+    # Penalize waiting time globally
+    waiting_time_dimension = routing.GetDimensionOrDie("WaitingTime")
+    waiting_time_dimension.SetGlobalSpanCostCoefficient(100)
