@@ -1,2 +1,4 @@
 ortools 
 numpy
+fastapi
+pydantic
