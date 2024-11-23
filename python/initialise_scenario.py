@@ -1,9 +1,9 @@
 import requests
 from scenario_model import Scenario
 
-def init_scenario(speed: float):
+def init_scenario(speed: float, n_cars:int = 5, n_customers:int = 10):
     url1 = 'http://localhost:8080/scenario/create'
-    params1 = {'numberOfVehicles': 5, 'numberOfCustomers': 10}
+    params1 = {'numberOfVehicles': n_cars, 'numberOfCustomers': n_customers}
     response = requests.post(url1, params=params1)
     scenario = Scenario.parse_obj(response.json())
     print(scenario.id)

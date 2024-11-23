@@ -5,7 +5,7 @@ from initialise_scenario import init_scenario
 import time
 from calculate_distance import calculate_distance
 
-scenario, scenario_start_time = init_scenario(0.01)
+scenario, scenario_start_time = init_scenario(0.01, 5, 20)
     
 start_time = time.perf_counter()
 get_url = f'http://localhost:8090/Scenarios/get_scenario/{scenario.id}'
