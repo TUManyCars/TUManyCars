@@ -1,0 +1,607 @@
+
+{
+    "openapi": "3.0.1",
+    "info": {
+      "title": "OpenAPI definition",
+      "version": "v0"
+    },
+    "servers": [
+      {
+        "url": "http://localhost:8080",
+        "description": "Generated server url"
+      }
+    ],
+    "tags": [
+      {
+        "description": "The endpoints to get vehicle information and control vehicles",
+        "name": "vehicles"
+      },
+      {
+        "description": "The endpoints to create, get and delete random scenarios",
+        "name": "scenario"
+      },
+      {
+        "description": "The endpoints to get customer information and control customers",
+        "name": "customers"
+      }
+    ],
+    "paths": {
+      "/customers/{customerId}": {
+        "get": {
+          "description": "Get a customer with the given id",
+          "operationId": "getCustomerById",
+          "parameters": [
+            {
+              "description": "The id of the customer to get",
+              "in": "path",
+              "name": "customerId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/CustomerDTO"
+                  }
+                }
+              },
+              "description": "Customer returned"
+            },
+            "404": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Customer not found"
+            }
+          },
+          "summary": "Get a customer",
+          "tags": [
+            "customers"
+          ]
+        }
+      },
+      "/scenario/create": {
+        "post": {
+          "description": "Initialize a random scenario",
+          "operationId": "createScenario",
+          "parameters": [
+            {
+              "description": "The number of vehicles in the scenario (see app properties for default)",
+              "in": "query",
+              "name": "numberOfVehicles",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            },
+            {
+              "description": "The number of customers in the scenario (see app properties for default)",
+              "in": "query",
+              "name": "numberOfCustomers",
+              "required": false,
+              "schema": {
+                "type": "integer",
+                "format": "int32"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ScenarioDTO"
+                  }
+                }
+              },
+              "description": "Scenario initialized"
+            }
+          },
+          "summary": "Initialize a scenario",
+          "tags": [
+            "scenario"
+          ]
+        }
+      },
+      "/scenario/{scenarioId}/metadata": {
+        "get": {
+          "description": "Get the metadata of a scenario",
+          "operationId": "getScenarioMetadata",
+          "parameters": [
+            {
+              "description": "The id of the scenario to get metadata for",
+              "in": "path",
+              "name": "scenarioId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ScenarioMetadataDTO"
+                  }
+                }
+              },
+              "description": "Scenario metadata returned"
+            }
+          },
+          "summary": "Get scenario metadata",
+          "tags": [
+            "scenario"
+          ]
+        }
+      },
+      "/scenarios": {
+        "get": {
+          "description": "Get all scenarios",
+          "operationId": "getAllScenarios",
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/ScenarioDTO"
+                    }
+                  }
+                }
+              },
+              "description": "Scenarios returned"
+            }
+          },
+          "summary": "Get all scenarios",
+          "tags": [
+            "scenario"
+          ]
+        }
+      },
+      "/scenarios/{scenarioId}": {
+        "delete": {
+          "description": "Delete a scenario with the given id",
+          "operationId": "deleteScenarioById",
+          "parameters": [
+            {
+              "description": "The id of the scenario to delete",
+              "in": "path",
+              "name": "scenarioId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Scenario deleted"
+            },
+            "404": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Scenario not found"
+            }
+          },
+          "summary": "Delete a scenario",
+          "tags": [
+            "scenario"
+          ]
+        },
+        "get": {
+          "description": "Get a scenario with the given id",
+          "operationId": "getScenarioById",
+          "parameters": [
+            {
+              "description": "The id of the scenario to get",
+              "in": "path",
+              "name": "scenarioId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ScenarioDTO"
+                  }
+                }
+              },
+              "description": "Scenario returned"
+            },
+            "404": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Scenario not found"
+            }
+          },
+          "summary": "Get a scenario",
+          "tags": [
+            "scenario"
+          ]
+        }
+      },
+      "/scenarios/{scenarioId}/customers": {
+        "get": {
+          "description": "Get all customers for a scenario with the given id",
+          "operationId": "getAllCustomersByScenarioId",
+          "parameters": [
+            {
+              "description": "The id of the scenario to get customers for",
+              "in": "path",
+              "name": "scenarioId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/CustomerDTO"
+                    }
+                  }
+                }
+              },
+              "description": "customers"
+            },
+            "404": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Scenario not found"
+            }
+          },
+          "summary": "Get all customers for a scenario",
+          "tags": [
+            "customers"
+          ]
+        }
+      },
+      "/scenarios/{scenarioId}/vehicles": {
+        "get": {
+          "description": "Get all vehicles for a scenario with the given id",
+          "operationId": "getAllVehiclesByScenarioId",
+          "parameters": [
+            {
+              "description": "The id of the scenario to get vehicles for",
+              "in": "path",
+              "name": "scenarioId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "type": "array",
+                    "items": {
+                      "$ref": "#/components/schemas/StandardMagentaVehicleDTO"
+                    }
+                  }
+                }
+              },
+              "description": "Vehicles returned"
+            },
+            "404": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Scenario not found"
+            }
+          },
+          "summary": "Get all vehicles for a scenario",
+          "tags": [
+            "vehicles"
+          ]
+        }
+      },
+      "/vehicles/{vehicleId}": {
+        "get": {
+          "description": "Get a vehicle with the given id",
+          "operationId": "getVehicleById",
+          "parameters": [
+            {
+              "description": "The id of the vehicle to get",
+              "in": "path",
+              "name": "vehicleId",
+              "required": true,
+              "schema": {
+                "type": "string",
+                "format": "uuid"
+              }
+            }
+          ],
+          "responses": {
+            "200": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/StandardMagentaVehicleDTO"
+                  }
+                }
+              },
+              "description": "Vehicle returned"
+            },
+            "404": {
+              "content": {
+                "application/json": {
+                  "schema": {
+                    "$ref": "#/components/schemas/ResponseMessage"
+                  }
+                }
+              },
+              "description": "Vehicle not found"
+            }
+          },
+          "summary": "Get a vehicle",
+          "tags": [
+            "vehicles"
+          ]
+        }
+      }
+    },
+    "components": {
+      "schemas": {
+        "CustomerDTO": {
+          "type": "object",
+          "description": "The customer data transfer object",
+          "properties": {
+            "awaitingService": {
+              "type": "boolean"
+            },
+            "coordX": {
+              "type": "number",
+              "format": "float"
+            },
+            "coordY": {
+              "type": "number",
+              "format": "float"
+            },
+            "destinationX": {
+              "type": "number",
+              "format": "float"
+            },
+            "destinationY": {
+              "type": "number",
+              "format": "float"
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            }
+          },
+          "required": [
+            "awaitingService",
+            "coordX",
+            "coordY",
+            "destinationX",
+            "destinationY",
+            "id"
+          ]
+        },
+        "ResponseMessage": {
+          "type": "object",
+          "properties": {
+            "message": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "message"
+          ]
+        },
+        "ScenarioDTO": {
+          "type": "object",
+          "description": "The scenario data transfer object",
+          "properties": {
+            "customers": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/CustomerDTO"
+              }
+            },
+            "endTime": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "startTime": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "vehicles": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/StandardMagentaVehicleDTO"
+              }
+            }
+          },
+          "required": [
+            "customers",
+            "endTime",
+            "id",
+            "startTime",
+            "status",
+            "vehicles"
+          ]
+        },
+        "ScenarioMetadataDTO": {
+          "type": "object",
+          "description": "The scenario metadata data transfer object",
+          "properties": {
+            "endTime": {
+              "type": "string"
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "startTime": {
+              "type": "string"
+            },
+            "status": {
+              "type": "string"
+            },
+            "vehicleData": {
+              "type": "array",
+              "items": {
+                "$ref": "#/components/schemas/VehicleDataDto"
+              }
+            }
+          },
+          "required": [
+            "endTime",
+            "id",
+            "startTime",
+            "status"
+          ]
+        },
+        "StandardMagentaVehicleDTO": {
+          "type": "object",
+          "description": "The vehicle data transfer object",
+          "properties": {
+            "activeTime": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "coordX": {
+              "type": "number",
+              "format": "float"
+            },
+            "coordY": {
+              "type": "number",
+              "format": "float"
+            },
+            "customerId": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "distanceTravelled": {
+              "type": "number",
+              "format": "float"
+            },
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "isAvailable": {
+              "type": "boolean"
+            },
+            "numberOfTrips": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "remainingTravelTime": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "vehicleSpeed": {
+              "type": "number",
+              "format": "float"
+            }
+          },
+          "required": [
+            "activeTime",
+            "coordX",
+            "coordY",
+            "customerId",
+            "distanceTravelled",
+            "id",
+            "isAvailable",
+            "numberOfTrips",
+            "remainingTravelTime",
+            "vehicleSpeed"
+          ]
+        },
+        "VehicleDataDto": {
+          "type": "object",
+          "description": "The vehicle data transfer object",
+          "properties": {
+            "id": {
+              "type": "string",
+              "format": "uuid"
+            },
+            "totalTravelTime": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "totalTrips": {
+              "type": "integer",
+              "format": "int32"
+            },
+            "travelTimes": {
+              "type": "string"
+            }
+          },
+          "required": [
+            "id",
+            "totalTravelTime",
+            "totalTrips",
+            "travelTimes"
+          ]
+        }
+      }
+    }
+  }

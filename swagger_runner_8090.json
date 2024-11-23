@@ -1,0 +1,297 @@
+
+{
+    "swagger": "2.0",
+    "basePath": "/",
+    "paths": {
+      "/Runner/launch_scenario/{scenario_id}": {
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "post": {
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          },
+          "operationId": "post_launch_scenario",
+          "parameters": [
+            {
+              "name": "speed",
+              "in": "query",
+              "type": "number",
+              "description": "Execution speed of the scenario (float, set to 1 for real time, \u003C 1 for faster execution)",
+              "default": 0.2
+            }
+          ],
+          "tags": [
+            "Runner"
+          ]
+        }
+      },
+      "/Scenarios/get_scenario/{scenario_id}": {
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "get": {
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          },
+          "operationId": "get_get_scenario",
+          "tags": [
+            "Scenarios"
+          ]
+        }
+      },
+      "/Scenarios/initialize_scenario": {
+        "post": {
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          },
+          "operationId": "post_initialize_scenario",
+          "parameters": [
+            {
+              "name": "payload",
+              "required": true,
+              "in": "body",
+              "schema": {
+                "$ref": "#/definitions/Scenario"
+              }
+            },
+            {
+              "name": "db_scenario_id",
+              "in": "query",
+              "type": "string",
+              "description": "The ID of the scenario (optional if request body is provided)"
+            }
+          ],
+          "tags": [
+            "Scenarios"
+          ]
+        }
+      },
+      "/Scenarios/update_scenario/{scenario_id}": {
+        "parameters": [
+          {
+            "name": "scenario_id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          }
+        ],
+        "put": {
+          "responses": {
+            "200": {
+              "description": "Success"
+            }
+          },
+          "operationId": "put_update_scenario",
+          "parameters": [
+            {
+              "name": "payload",
+              "required": true,
+              "in": "body",
+              "schema": {
+                "$ref": "#/definitions/UpdateScenario"
+              }
+            }
+          ],
+          "tags": [
+            "Scenarios"
+          ]
+        }
+      }
+    },
+    "info": {
+      "title": "ScenarioRunner API",
+      "version": "1.0",
+      "description": "A simple API for managing scenarios"
+    },
+    "produces": [
+      "application/json"
+    ],
+    "consumes": [
+      "application/json"
+    ],
+    "tags": [
+      {
+        "name": "Scenarios",
+        "description": "Scenario operations"
+      },
+      {
+        "name": "Runner",
+        "description": "Scenario runner operations"
+      }
+    ],
+    "definitions": {
+      "Scenario": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Scenario ID"
+          },
+          "startTime": {
+            "type": "string",
+            "description": "Start time of the scenario"
+          },
+          "endTime": {
+            "type": "string",
+            "description": "End time of the scenario"
+          },
+          "status": {
+            "type": "string",
+            "description": "Status of the scenario"
+          },
+          "vehicles": {
+            "type": "array",
+            "description": "List of vehicles",
+            "items": {
+              "$ref": "#/definitions/Vehicle"
+            }
+          },
+          "customers": {
+            "type": "array",
+            "description": "List of customers",
+            "items": {
+              "$ref": "#/definitions/Customer"
+            }
+          }
+        },
+        "type": "object"
+      },
+      "Vehicle": {
+        "required": [
+          "coordX",
+          "coordY",
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Vehicle ID"
+          },
+          "coordX": {
+            "type": "number",
+            "description": "X Coordinate of the vehicle"
+          },
+          "coordY": {
+            "type": "number",
+            "description": "Y Coordinate of the vehicle"
+          },
+          "isAvailable": {
+            "type": "boolean",
+            "description": "Availability of the vehicle"
+          },
+          "vehicleSpeed": {
+            "type": "number",
+            "description": "Speed of the vehicle"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "ID of the customer assigned to the vehicle"
+          },
+          "remainingTravelTime": {
+            "type": "number",
+            "description": "Remaining travel time for the vehicle"
+          },
+          "distanceTravelled": {
+            "type": "number",
+            "description": "Total distance the vehicle has travelled"
+          },
+          "activeTime": {
+            "type": "number",
+            "description": "Total active time of the vehicle"
+          },
+          "numberOfTrips": {
+            "type": "integer",
+            "description": "Total number of trips made by the vehicle"
+          }
+        },
+        "type": "object"
+      },
+      "Customer": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Customer ID"
+          },
+          "coordX": {
+            "type": "number",
+            "description": "Customer X coordinate"
+          },
+          "coordY": {
+            "type": "number",
+            "description": "Customer Y coordinate"
+          },
+          "destinationX": {
+            "type": "number",
+            "description": "Customer destination X coordinate"
+          },
+          "destinationY": {
+            "type": "number",
+            "description": "Customer destination Y coordinate"
+          },
+          "awaitingService": {
+            "type": "boolean",
+            "description": "Whether the customer is awaiting service"
+          }
+        },
+        "type": "object"
+      },
+      "UpdateScenario": {
+        "properties": {
+          "vehicles": {
+            "type": "array",
+            "description": "List of updated vehicles",
+            "items": {
+              "$ref": "#/definitions/VehicleUpdate"
+            }
+          }
+        },
+        "type": "object"
+      },
+      "VehicleUpdate": {
+        "required": [
+          "id"
+        ],
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Vehicle ID"
+          },
+          "customerId": {
+            "type": "string",
+            "description": "Assigned customer ID"
+          }
+        },
+        "type": "object"
+      }
+    },
+    "responses": {
+      "ParseError": {
+        "description": "When a mask can't be parsed"
+      },
+      "MaskError": {
+        "description": "When any error occurs on mask"
+      }
+    }
+  }
