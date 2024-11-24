@@ -40,8 +40,6 @@ export async function GET(request: NextRequest) {
     return new NextResponse('Scenario ID is required', { status: 400 });
   }
 
-  console.log("called GET");
-
   const stream = new ReadableStream({
     async start(controller) {
       let interval: NodeJS.Timeout | null = null;

@@ -1,0 +1,1 @@
+export type OptimizeTarget = "sustainability" | "customer_satisfaction";

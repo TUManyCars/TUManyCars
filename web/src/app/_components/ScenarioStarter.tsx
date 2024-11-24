@@ -6,13 +6,14 @@ import type Vehicle from "~/types/Vehicle";
 import { v4 as uuidv4 } from 'uuid';
 import { api } from "~/trpc/react";
 import { useRouter } from "next/navigation";
+import type { OptimizeTarget } from "~/types/OptimizeTarget";
 
 export function ScenarioStarter() {
   // Map state
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
   // Configuration options
-  const [optimizationTarget, setOptimizationTarget] = useState<"sustainability" | "customer_satisfaction">("sustainability");
+  const [optimizationTarget, setOptimizationTarget] = useState<OptimizeTarget>("sustainability");
   const [returnToHub, setReturnToHub] = useState(false);
   const [startAtHub, setStartAtHub] = useState(false);
   
@@ -21,12 +22,13 @@ export function ScenarioStarter() {
   const [customerCount, setCustomerCount] = useState(10);
   const [randomVehicleCount, setRandomVehicleCount] = useState(5);
   const [simulationSpeed, setSimulationSpeed] = useState(1);
+  const [isStarting, setStarting] = useState(false);
 
   const router = useRouter();
 
   const setup = api.scenario.setup.useMutation({
     onSuccess: (data) => {
-      router.push(`/live?scenarioid=${data.scenarioId}`);
+      router.push(`/live?scenarioid=${data.scenarioId}&optimize=${optimizationTarget}&returnToHub=${returnToHub}&simulationSpeed=${simulationSpeed}`);
     }
   });
 
@@ -60,13 +62,14 @@ export function ScenarioStarter() {
       customVehicles: vehicles,
       simulationSpeed
     });
+
+    setStarting(true);
   };
 
   return (
     <div className="w-full max-w-6xl px-4">
       <div className="mb-8">
         <div className="space-y-4">
-          {/* Basic Options */}
           <div className="space-y-4">
             <div className="max-w-xs">
               <label className="block text-sm font-medium mb-1">Optimization Target</label>
@@ -100,7 +103,7 @@ export function ScenarioStarter() {
                   type="checkbox"
                   checked={returnToHub}
                   onChange={(e) => setReturnToHub(e.target.checked)}
-                  className="form-checkbox"
+                  className="form-checkbox accent-[#ea0a8e]"
                 />
                 <span>Return to Hub</span>
               </label>
@@ -110,7 +113,7 @@ export function ScenarioStarter() {
                   type="checkbox"
                   checked={startAtHub}
                   onChange={(e) => setStartAtHub(e.target.checked)}
-                  className="form-checkbox"
+                  className="form-checkbox accent-[#ea0a8e]"
                 />
                 <span>Start at Hub</span>
               </label>
@@ -120,7 +123,7 @@ export function ScenarioStarter() {
             <button
               type="button"
               onClick={() => setShowAdvanced(!showAdvanced)}
-              className="flex items-center gap-2 text-blue-500 hover:text-blue-700 transition-colors"
+              className="flex items-center gap-2 text-white hover:text-slate-100 transition-colors"
             >
               <svg
                 className={`w-4 h-4 transform transition-transform duration-200 ${showAdvanced ? 'rotate-180' : ''}`}
@@ -198,9 +201,9 @@ export function ScenarioStarter() {
             <button
               onClick={() => handleSubmit()}
               disabled={vehicles.length + randomVehicleCount === 0}
-              className="bg-blue-500 text-white py-3 px-8 text-lg font-semibold rounded-md hover:bg-blue-600 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed min-w-[200px]"
+              className="bg-[#ea0a8e] text-white py-3 px-8 text-lg font-semibold rounded-md hover:bg-[#ea0a8db9] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed min-w-[200px]"
             >
-              Start Simulation
+              {isStarting ? 'Starting...' : 'Start Simulation'}
             </button>
           </div>
         </div>
@@ -208,3 +211,4 @@ export function ScenarioStarter() {
     </div>
   );
 }
+

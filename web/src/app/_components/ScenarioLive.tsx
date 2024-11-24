@@ -6,18 +6,49 @@ import type Scenario from "~/types/Scenario";
 import { useEffect, useRef, useState, useCallback } from "react";
 import type Vehicle from "~/types/Vehicle";
 import type Customer from "~/types/Customer";
+import type CalculationResult from "~/types/CalculationResult";
+import { OptimizeTarget } from "~/types/OptimizeTarget";
+import { api } from "~/trpc/react";
 
 interface VehicleWithGoal extends Vehicle {
   targetX: number; // Latitude
   targetY: number; // Longitude
 }
 
-export function ScenarioLive({ scenarioId }: { scenarioId: string }) {
+export function ScenarioLive({ 
+  scenarioId, 
+  optimize, 
+  returnToHub,
+  simulationSpeed 
+}: { 
+  scenarioId: string, 
+  optimize: OptimizeTarget, 
+  returnToHub: boolean,
+  simulationSpeed: number 
+}) {
   const [vehicles, setVehicles] = useState<VehicleWithGoal[]>([]);
   const [customers, setCustomers] = useState<Customer[]>([]);
+  const [calculationResults, setCalculationResults] = useState<CalculationResult | null | false>(null);
   const eventSourceRef = useRef<EventSource | null>(null);
   const animationFrameRef = useRef<number>();
   const lastUpdateTimeRef = useRef<number>(Date.now());
+  const hasCalculated = useRef(false);
+
+  const calculate = api.scenario.calculate.useMutation({
+    onSuccess: (data) => {
+      setCalculationResults(data);
+    },
+    onError: () => {
+      setCalculationResults(false);
+    },
+  });
+
+  useEffect(() => {
+    if (!hasCalculated.current) {
+      calculate.mutate({ scenarioId, optimize, returnToHub });
+      hasCalculated.current = true;
+    }
+  }, [calculate, scenarioId, optimize, returnToHub]);
 
   function calculateEuclideanDistance(latA: number, latB: number, longA: number, longB: number): number {
     const RADIANS = Math.PI / 180;
@@ -34,8 +65,7 @@ export function ScenarioLive({ scenarioId }: { scenarioId: string }) {
 
   const startAnimation = useCallback(() => {
     const animate = () => {
-      const simulationSpeed = 0.07;
-      const elapsedTimeSinceUpdate = ((Date.now() - lastUpdateTimeRef.current) / 1000) / simulationSpeed;
+      const elapsedTimeSinceUpdate = ((Date.now() - lastUpdateTimeRef.current) / 1000) / (simulationSpeed * 2);
 
       setVehicles(prevVehicles => 
         prevVehicles.map(vehicle => {
@@ -59,7 +89,7 @@ export function ScenarioLive({ scenarioId }: { scenarioId: string }) {
       cancelAnimationFrame(animationFrameRef.current);
     }
     animate();
-  }, []);
+  }, [simulationSpeed]);
 
   // Connect to SSE endpoint
   useEffect(() => {
@@ -73,6 +103,19 @@ export function ScenarioLive({ scenarioId }: { scenarioId: string }) {
       const liveCustomers = liveScenario.customers;
       console.log(liveVehicles, liveCustomers);
       lastUpdateTimeRef.current = Date.now();
+
+      console.log(liveCustomers);
+
+      const allCustomersServed = !liveCustomers.some(customer => customer.awaitingService);
+      if (allCustomersServed) {
+        console.log("All customers served, closing connection");
+        eventSource.close();
+        eventSourceRef.current = null;
+        if (animationFrameRef.current) {
+          cancelAnimationFrame(animationFrameRef.current);
+        }
+        return;
+      }
 
       const vehicleContainsCustomer = (vehicle: Vehicle) => {
         return vehicle.customerId && liveCustomers.some(customer => 
@@ -109,10 +152,26 @@ export function ScenarioLive({ scenarioId }: { scenarioId: string }) {
   }, [scenarioId, startAnimation]);
 
   return (
-    <ClientMap 
-      center={[48.13515, 11.5825]}
-      vehicles={vehicles}
-      customers={customers}
-    />
+    <div className="w-full h-full max-w-6xl px-4 flex flex-col gap-4 justify-center">
+      <div className="w-full p-4 bg-[#11182780] text-white rounded-lg mb-4">
+        {calculationResults ? (
+          <div className="space-y-2">
+            <p>Algorithm Time: {calculationResults.time_algo_took_in_sec.toFixed(2)}s</p>
+            <p>Total Vehicle Usage: {calculationResults.overall_car_usage_in_sec.toFixed(2)}min</p>
+            <p>Max Travel Time for a Car: {calculationResults.last_customer_at_destination_in_sec.toFixed(2)}min</p>
+          </div>
+        ) : (
+          <p className="text-white">{calculationResults === false ? "Could not calculate data..." : "Calculating..."}</p>
+        )}
+      </div>
+      <h3 className="text-white mt-6">Simulation</h3>
+      <div className="w-full h-[50vh]">
+        <ClientMap 
+          center={[48.13515, 11.5825]}
+          vehicles={vehicles}
+          customers={customers}
+        />
+      </div>
+    </div>
   );
 }

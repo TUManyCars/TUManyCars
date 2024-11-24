@@ -3,6 +3,7 @@ import axios from "axios";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import type Scenario from "~/types/Scenario";
 import Vehicle from "~/types/Vehicle";
+import CalculationResult from "~/types/CalculationResult";
 
 const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
 const ROUTE_PYTHON = `http://${host}:8086`;
@@ -25,7 +26,7 @@ export const scenarioRouter = createTRPCRouter({
     .mutation(async ({ input }) => {
       try {
         // Step 1: Create the scenario
-        const createResponse = await axios.post(
+        const createResponse = await axios.post<Scenario>(
           ROUTE_API + "/scenario/create",
           null,
           {
@@ -36,14 +37,11 @@ export const scenarioRouter = createTRPCRouter({
           }
         );
 
-        console.log("aaaa");
-        console.log(host);
-        
         if (createResponse.status !== 200) {
           throw new Error("Failed to create scenario");
         }
         
-        const scenario = createResponse.data as Scenario;
+        const scenario = createResponse.data;
         console.log("Scenario created with ID:", scenario.id);
 
         // Replace the positions of the last vehicles with custom positions
@@ -56,6 +54,15 @@ export const scenarioRouter = createTRPCRouter({
           if (vehicleToUpdate) {
             vehicleToUpdate.coordX = customVehicle.coordX;
             vehicleToUpdate.coordY = customVehicle.coordY;
+          }
+        }
+
+        if (input.startAtHub) {
+          const hubX = 48.137371;
+          const hubY = 11.575328;
+          for (const vehicle of scenario.vehicles) {
+            vehicle.coordX = hubX;
+            vehicle.coordY = hubY;
           }
         }
 
@@ -79,26 +86,34 @@ export const scenarioRouter = createTRPCRouter({
           throw new Error("Failed to launch scenario");
         }
 
-        const startTime = (launchResponse.data as { startTime: string }).startTime;
-        console.log("Scenario launched successfullyy");
-
-        // Step 4: Call Python calculation HTTP API endpoint
-        const calculationResponse = await axios.post(
-          ROUTE_PYTHON + "/solve-routing",
-          { scenario_id: scenario.id, solve_for_shortest_path: input.optimizationTarget === "sustainability" },
-        );
-
-        console.log("WORKED", calculationResponse);
+        console.log("Scenario launched successfully");
 
         return {
-          success: true,
-          scenarioId: scenario.id,
-          startTime: startTime,
-          config: input,
+          scenarioId: scenario.id
         };
       } catch (error) {
         console.error("Error in scenario setup:", error);
         throw error;
       }
-    })
+    }),
+
+    calculate: publicProcedure
+    .input(
+      z.object({
+        scenarioId: z.string(),
+        optimize: z.enum(["sustainability", "customer_satisfaction"]),
+        returnToHub: z.boolean()
+      }),
+    )
+    .mutation(async ({ input }) => {
+      const { data } = await axios.post<CalculationResult>(ROUTE_PYTHON + "/solve-routing",
+        { 
+          scenario_id: input.scenarioId, 
+          solve_for_shortest_path: input.optimize === "sustainability",
+          return_to_hub: input.returnToHub,
+          start_cars: true
+        },
+      );
+      return data;
+    }),
 });
