@@ -75,16 +75,19 @@ def add_max_overall_capacity_per_vehicle(
     # capacity_dimension = routing.GetDimensionOrDie("Capacity")
 
 
-def minimize_largest_end_time(routing: RoutingModel):
+def minimize_largest_end_time(routing: RoutingModel, time_callback_index: int):
     """Adds a time dimension and sets an objective to minimize the largest end time."""
+    routing.SetArcCostEvaluatorOfAllVehicles(time_callback_index)
     time_dimension = routing.GetDimensionOrDie("Time")
-    time_dimension.SetGlobalSpanCostCoefficient(100)
+    time_dimension.SetGlobalSpanCostCoefficient(20)
 
 
 def minimize_total_travel_time(routing: RoutingModel, time_callback_index: int):
     """Set objective to minimize the total travel time."""
     # Set cost of travel for each arc (from -> to)
     routing.SetArcCostEvaluatorOfAllVehicles(time_callback_index)
+    time_dimension = routing.GetDimensionOrDie("Time")
+    time_dimension.SetGlobalSpanCostCoefficient(10)
 
 
 def set_penalty_for_waiting_at_start(routing: RoutingModel):

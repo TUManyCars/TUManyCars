@@ -108,9 +108,9 @@ def get_routing_solution(
     )
 
     if solve_for_shortest_path:
-        minimize_largest_end_time(routing)
-    else:
         minimize_total_travel_time(routing, time_callback_index)
+    else:
+        minimize_largest_end_time(routing, time_callback_index)
 
     set_penalty_for_waiting_at_start(routing)
 
