@@ -38,7 +38,7 @@ services:
     volumes:
       - ./python:/python  # Mount your local code directory
     ports:
-      - "8000:8000"
+      - "8086:8086"
     environment:
       - BACKEND_URL=http://backend:8085
       - SCENARIORUNNER_URL=http://scenariorunner:8090
@@ -50,7 +50,7 @@ services:
       - FRONTEND_URL=http://frontend:9000
     command: >
       bash -c "pip install fastapi uvicorn httpx sqlalchemy psycopg2-binary ortools pydantic requests &&
-              uvicorn endpoint:app --host 0.0.0.0 --port 8000 --reload"
+              uvicorn endpoint:app --host 0.0.0.0 --port 8086 --reload"
     depends_on:
       - backend
       - scenariorunner
