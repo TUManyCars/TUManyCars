@@ -1,12 +1,18 @@
 import { ScenarioLive } from "../_components/ScenarioLive";
 import { HydrateClient } from "~/trpc/server";
+import { redirect } from "next/navigation";
 
 export default async function LivePage({
   searchParams,
 }: {
-  searchParams: Record<string, string | string[] | undefined>;
+  searchParams: Promise<Record<string, string | string[] | undefined>>;
 }) {
-  const scenarioId = searchParams.scenarioid as string;
+  const params = await searchParams;
+  const scenarioId = params.scenarioid;
+
+  if (!scenarioId || typeof scenarioId !== 'string') {
+    redirect('/');
+  }
 
   return (
     <HydrateClient>

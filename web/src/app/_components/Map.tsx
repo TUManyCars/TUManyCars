@@ -3,10 +3,17 @@
 import { MapContainer, TileLayer, Marker, Popup, useMapEvents } from "react-leaflet";
 import { LatLngExpression, LatLngTuple, Icon } from "leaflet";
 import "leaflet/dist/leaflet.css";
-import "leaflet-defaulticon-compatibility/dist/leaflet-defaulticon-compatibility.css";
-import "leaflet-defaulticon-compatibility";
 import type Vehicle from "~/types/Vehicle";
 import type Customer from "~/types/Customer";
+
+// Fix for Leaflet default icon issue
+import { CSSProperties } from "react";
+const mapStyle: CSSProperties = {
+  height: "100%",
+  width: "100%",
+  position: "relative",
+  zIndex: 0
+};
 
 interface Props {
   center: LatLngExpression | LatLngTuple;
@@ -85,7 +92,7 @@ const Map = ({ zoom = defaults.zoom, center, vehicles, customers, onMapClick, on
       <MapContainer
         center={center}
         zoom={zoom}
-        style={{ height: "100%", width: "100%" }}
+        style={mapStyle}
       >
         <MapEvents />
         <TileLayer

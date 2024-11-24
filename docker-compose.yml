@@ -65,6 +65,7 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
+      - NEXT_PUBLIC_HOST=host.docker.internal
     command: >
       bash -c "npm install &&
               npm run dev"

@@ -2,10 +2,11 @@ import { z } from "zod";
 import axios from "axios";
 import { createTRPCRouter, publicProcedure } from "~/server/api/trpc";
 import type Scenario from "~/types/Scenario";
-import { observable } from '@trpc/server/observable';
 import Vehicle from "~/types/Vehicle";
 
-const ROUTE = "http://host.docker.internal:8080";
+const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
+const ROUTE_API = `http://${host}:8080`;
+const ROUTE_RUNNER = `http://${host}:8090`;
 
 export const scenarioRouter = createTRPCRouter({
   setup: publicProcedure
@@ -24,7 +25,7 @@ export const scenarioRouter = createTRPCRouter({
       try {
         // Step 1: Create the scenario
         const createResponse = await axios.post(
-          "http://host.docker.internal:8080/scenario/create",
+          ROUTE_API + "/scenario/create",
           null,
           {
             params: {
@@ -56,7 +57,7 @@ export const scenarioRouter = createTRPCRouter({
 
         // Step 2: Initialize the scenario with modified JSON
         const initializeResponse = await axios.post(
-          "http://host.docker.internal:8090/Scenarios/initialize_scenario",
+          ROUTE_RUNNER + "/Scenarios/initialize_scenario",
           scenario
         );
 
@@ -67,7 +68,7 @@ export const scenarioRouter = createTRPCRouter({
 
         // Step 3: Launch the scenario
         const launchResponse = await axios.post(
-          `http://host.docker.internal:8090/Runner/launch_scenario/${scenario.id}?speed=${input.simulationSpeed}`
+          `${ROUTE_RUNNER}/Runner/launch_scenario/${scenario.id}?speed=${input.simulationSpeed}`
         );
 
         if (launchResponse.status !== 200) {
@@ -89,45 +90,5 @@ export const scenarioRouter = createTRPCRouter({
         console.error("Error in scenario setup:", error);
         throw error;
       }
-    }),
-
-  get: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
-      const { id } = input;
-      const response = await axios.get(`${ROUTE}/scenarios/${id}`);
-      return response.data as Scenario;
-    }),
-
-  create: publicProcedure
-    .input(
-      z.object({
-        vehicleCount: z.number(),
-        customerCount: z.number(),
-        simulationSpeed: z.number(),
-      }),
-    )
-    .mutation(async ({ input }) => {
-      const { vehicleCount, customerCount } = input;
-      const response = await axios.post(
-        `${ROUTE}/scenario/create?numberOfVehicles=${vehicleCount}&numberOfCustomers=${customerCount}`,
-      );
-      console.log("--created--");
-      return response.data as string;
-    }),
-
-  delete: publicProcedure
-    .input(z.object({ id: z.string() }))
-    .query(async ({ input }) => {
-      const { id } = input;
-      const response = await axios.delete(`${ROUTE}/scenarios/${id}`);
-      console.log("--delete--");
-      return response.data as Scenario;
-    }),
-
-  getAll: publicProcedure.query(async () => {
-    const response = await axios.get(`${ROUTE}/scenarios`);
-    console.log("--getAll--");
-    return response.data as Scenario[];
-    }),
+    })
 });
