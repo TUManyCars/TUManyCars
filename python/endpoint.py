@@ -20,6 +20,7 @@ class RouteRequest(BaseModel):
     scenario_id: str
     solve_for_shortest_path: Optional[bool] = False
     start_cars: Optional[bool] = True
+    hub_coords: Optional[tuple[float, float]] = (48.137371, 11.575328)
 
 
 class RouteResponse(BaseModel):
@@ -42,7 +43,12 @@ def solve_routing(
     """
     try:
         (car_routes, total_travel_time, max_car_travel_time, elapsed_time_algo) = (
-            run_solver(request.scenario_id, request.solve_for_shortest_path, 10)
+            run_solver(
+                request.scenario_id,
+                request.hub_coords,
+                request.solve_for_shortest_path,
+                10,
+            )
         )
         if request.start_cars:
             background_tasks.add_task(run_main, request.scenario_id, car_routes)
@@ -68,7 +74,7 @@ def solver(request: SolverRequest) -> RouteResponse:
     """
     try:
         (_, total_travel_time, max_car_travel_time, elapsed_time_algo) = run_solver(
-            request.scenario_id, False, request.max_solv_time_in_sec
+            request.scenario_id, None, False, request.max_solv_time_in_sec
         )
     except Exception as exc:
         print(str(exc))

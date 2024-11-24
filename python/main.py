@@ -1,7 +1,6 @@
 import requests
 from scenario_model import Scenario
 from patch_model import VehiclesUpdate, OneVehicleUpdate
-from initialise_scenario import init_scenario
 import time
 from _create_route import get_routing_solution
 import os
@@ -9,6 +8,7 @@ import os
 
 def run_solver(
     scenario_id: str,
+    hub_coords: tuple[float, float] | None,
     solve_for_shortest_path: bool | None,
     max_solv_time_in_sec: int = 10,
 ):
@@ -21,7 +21,9 @@ def run_solver(
     if "message" in response_data and response_data["message"] == "Scenario not found":
         raise ValueError("Scenario was not found for id.")
     scenario = Scenario.parse_obj(response_data)
-    return get_routing_solution(scenario, solve_for_shortest_path, max_solv_time_in_sec)
+    return get_routing_solution(
+        scenario, hub_coords, solve_for_shortest_path, max_solv_time_in_sec
+    )
 
 
 def run_main(scenario_id: str, car_routes):
@@ -74,5 +76,6 @@ if __name__ == "__main__":
     from pathlib import Path
 
     scenario2 = Scenario.parse_file((Path(__file__).parent / "example.json"))
+    # from initialise_scenario import init_scenario
     # scenario = init_scenario(0.01, 5, 20)
     run_main(scenario2, False)

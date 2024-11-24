@@ -57,6 +57,7 @@ def get_list_of_customer_ids_from_nodes(
 
 def get_routing_solution(
     scenario: Scenario,
+    hub_coords: tuple[float, float] | None,
     solve_for_shortest_path: bool = False,
     max_solv_time_in_sec: int = 10,
 ) -> tuple[dict[int, list[int]], int]:
@@ -73,7 +74,10 @@ def get_routing_solution(
 
     vehicle_end_indeces = []
     for vehicle in scenario.vehicles:
-        end_car_coords = (vehicle.coordX, vehicle.coordY)
+        if hub_coords:
+            end_car_coords = hub_coords
+        else:
+            end_car_coords = (vehicle.coordX, vehicle.coordY)
         locations.append(end_car_coords)
         vehicle_end_indeces.append(len(locations) - 1)
 
