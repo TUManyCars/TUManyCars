@@ -7,7 +7,20 @@ from _create_route import get_routing_solution
 import os
 
 
-def run_main(scenario_id: str, solve_for_shortest_path: bool | None):
+def run_solver(scenario_id: str, solve_for_shortest_path: bool | None):
+    get_url = (
+        os.environ.get("8080_URL", "http://localhost:8080")
+        + f"/Scenarios/get_scenario/{scenario_id}"
+    )
+
+    response_data = requests.get(get_url).json()
+    if "message" in response_data and response_data["message"] == "Scenario not found":
+        raise ValueError("Scenario was not found for id.")
+    scenario = Scenario.parse_obj(response_data)
+    return get_routing_solution(scenario, solve_for_shortest_path)
+
+
+def run_main(scenario_id: str, car_routes):
     start_time = time.perf_counter()
     get_url = (
         os.environ.get("8080_URL", "http://localhost:8080")
@@ -17,21 +30,9 @@ def run_main(scenario_id: str, solve_for_shortest_path: bool | None):
         os.environ.get("8090_URL", "http://localhost:8090")
         + f"/Scenarios/update_scenario/{scenario_id}"
     )
-
-    cars = VehiclesUpdate(vehicles=[])
-
     response_data = requests.get(get_url).json()
-    print(response_data)
-    if "message" in response_data and response_data["message"] == "Scenario not found":
-        raise ValueError("Scenario was not found for id.")
+    cars = VehiclesUpdate(vehicles=[])
     scenario = Scenario.parse_obj(response_data)
-
-    (
-        car_routes,
-        total_travel,
-        max_car_trave_time,
-        elapsed_time_algo,
-    ) = get_routing_solution(scenario, solve_for_shortest_path)
     while scenario.status != "COMPLETED":
         response_data = requests.get(get_url).json()
         if (
@@ -62,7 +63,7 @@ def run_main(scenario_id: str, solve_for_shortest_path: bool | None):
     print(f"Elapsed time: {elapsed_time} seconds")
     print(f"Start time:{scenario.startTime}")
     print(f"End time:{scenario.endTime}")
-    return (elapsed_time_algo, total_travel, max_car_trave_time)
+    return
 
 
 if __name__ == "__main__":
