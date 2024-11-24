@@ -5,7 +5,7 @@ import type Scenario from "~/types/Scenario";
 import { observable } from '@trpc/server/observable';
 import Vehicle from "~/types/Vehicle";
 
-const ROUTE = "http://host.docker.internal:8080";
+const ROUTE = "http://host.docker.internal:8085";
 
 export const scenarioRouter = createTRPCRouter({
   setup: publicProcedure
@@ -24,7 +24,7 @@ export const scenarioRouter = createTRPCRouter({
       try {
         // Step 1: Create the scenario
         const createResponse = await axios.post(
-          "http://host.docker.internal:8080/scenario/create",
+          "http://host.docker.internal:8085/scenario/create",
           null,
           {
             params: {
