@@ -5,7 +5,9 @@ from typing import List
 from main import run_main, run_solver
 from typing import Optional
 
-app = FastAPI()
+app = FastAPI(
+    swagger_ui_parameters={"tryItOutEnabled": True},
+)
 
 
 class Location(BaseModel):
@@ -44,6 +46,30 @@ def solve_routing(
         )
         if request.start_cars:
             background_tasks.add_task(run_main, request.scenario_id, car_routes)
+    except Exception as exc:
+        print(str(exc))
+        raise HTTPException(status_code=400, detail=str(exc))
+    return RouteResponse(
+        time_algo_took_in_sec=elapsed_time_algo,
+        overall_car_usage_in_sec=total_travel_time,
+        last_customer_at_destination_in_sec=max_car_travel_time,
+    )
+
+
+class SolverRequest(BaseModel):
+    scenario_id: str
+    max_time: Optional[int] = 10
+
+
+@app.post("/solver", response_model=RouteResponse)
+def solver(request: SolverRequest) -> RouteResponse:
+    """
+    Solves a simple routing problem (e.g., finding the order to visit locations).
+    """
+    try:
+        (_, total_travel_time, max_car_travel_time, elapsed_time_algo) = run_solver(
+            request.scenario_id, False
+        )
     except Exception as exc:
         print(str(exc))
         raise HTTPException(status_code=400, detail=str(exc))

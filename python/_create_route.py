@@ -96,7 +96,7 @@ def get_routing_solution(
 
     print(len(scenario.customers))
 
-    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 3)
+    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.3)
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
     )
@@ -118,7 +118,9 @@ def get_routing_solution(
         routing_enums_pb2.LocalSearchMetaheuristic.AUTOMATIC
     )
     # GUIDED_LOCAL_SEARCH not good -> slow
-    search_parameters.time_limit.seconds = 4
+
+    # !!!!!!!! adjust -> thinks longer, but result is better
+    search_parameters.time_limit.seconds = 10
     # search_parameters.log_search = True
     solution = routing.SolveWithParameters(search_parameters)
 
