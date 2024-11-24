@@ -20,7 +20,7 @@ class RouteRequest(BaseModel):
     scenario_id: str
     solve_for_shortest_path: Optional[bool] = False
     start_cars: Optional[bool] = True
-    hub_coords: Optional[tuple[float, float]] = (48.137371, 11.575328)
+    go_to_hub: Optional[bool] = False
 
 
 class RouteResponse(BaseModel):
@@ -41,11 +41,14 @@ def solve_routing(
     """
     Solves a simple routing problem (e.g., finding the order to visit locations).
     """
+    hub_coords = None
+    if request.go_to_hub:
+        hub_coords = (48.137371, 11.575328)
     try:
         (car_routes, total_travel_time, max_car_travel_time, elapsed_time_algo) = (
             run_solver(
                 request.scenario_id,
-                request.hub_coords,
+                hub_coords,
                 request.solve_for_shortest_path,
                 10,
             )
