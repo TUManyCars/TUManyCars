@@ -102,13 +102,13 @@ def get_routing_solution(
         routing, [number_of_customers_per_car] * num_cars
     )
     # minimize_largest_end_time(routing)
-    minimize_total_travel_time(routing, time_callback_index)
+    # minimize_total_travel_time(routing, time_callback_index)
 
-    # if solve_for_shortest_path:
-    #     minimize_largest_end_time(routing)
-    # else:
-    #     minimize_total_travel_time(routing, time_callback_index)
-    #
+    if solve_for_shortest_path:
+        minimize_largest_end_time(routing)
+    else:
+        minimize_total_travel_time(routing, time_callback_index)
+
     set_penalty_for_waiting_at_start(routing)
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
@@ -119,7 +119,7 @@ def get_routing_solution(
         routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
     )
     search_parameters.time_limit.seconds = 12
-    search_parameters.log_search = False
+    # search_parameters.log_search = True
     solution = routing.SolveWithParameters(search_parameters)
 
     end_time = time.perf_counter()
