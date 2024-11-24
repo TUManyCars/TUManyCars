@@ -42,7 +42,7 @@ def solve_routing(
     """
     try:
         (car_routes, total_travel_time, max_car_travel_time, elapsed_time_algo) = (
-            run_solver(request.scenario_id, request.solve_for_shortest_path)
+            run_solver(request.scenario_id, request.solve_for_shortest_path, 10)
         )
         if request.start_cars:
             background_tasks.add_task(run_main, request.scenario_id, car_routes)
@@ -58,7 +58,7 @@ def solve_routing(
 
 class SolverRequest(BaseModel):
     scenario_id: str
-    max_time: Optional[int] = 10
+    max_solv_time_in_sec: int = 10
 
 
 @app.post("/solver", response_model=RouteResponse)
@@ -68,7 +68,7 @@ def solver(request: SolverRequest) -> RouteResponse:
     """
     try:
         (_, total_travel_time, max_car_travel_time, elapsed_time_algo) = run_solver(
-            request.scenario_id, False
+            request.scenario_id, False, request.max_solv_time_in_sec
         )
     except Exception as exc:
         print(str(exc))

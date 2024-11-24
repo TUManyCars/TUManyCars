@@ -56,7 +56,9 @@ def get_list_of_customer_ids_from_nodes(
 
 
 def get_routing_solution(
-    scenario: Scenario, solve_for_shortest_path: bool = False
+    scenario: Scenario,
+    solve_for_shortest_path: bool = False,
+    max_solv_time_in_sec: int = 10,
 ) -> tuple[dict[int, list[int]], int]:
     start_time = time.perf_counter()
     locations, precedence_pairs = process_customers(scenario)
@@ -96,12 +98,10 @@ def get_routing_solution(
 
     print(len(scenario.customers))
 
-    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.3)
+    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.4)
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
     )
-    # minimize_largest_end_time(routing)
-    # minimize_total_travel_time(routing, time_callback_index)
 
     if solve_for_shortest_path:
         minimize_largest_end_time(routing)
@@ -120,7 +120,7 @@ def get_routing_solution(
     # GUIDED_LOCAL_SEARCH not good -> slow
 
     # !!!!!!!! adjust -> thinks longer, but result is better
-    search_parameters.time_limit.seconds = 10
+    search_parameters.time_limit.seconds = max_solv_time_in_sec
     # search_parameters.log_search = True
     solution = routing.SolveWithParameters(search_parameters)
 

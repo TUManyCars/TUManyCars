@@ -7,7 +7,11 @@ from _create_route import get_routing_solution
 import os
 
 
-def run_solver(scenario_id: str, solve_for_shortest_path: bool | None):
+def run_solver(
+    scenario_id: str,
+    solve_for_shortest_path: bool | None,
+    max_solv_time_in_sec: int = 10,
+):
     get_url = (
         os.environ.get("8080_URL", "http://localhost:8080")
         + f"/Scenarios/get_scenario/{scenario_id}"
@@ -17,7 +21,7 @@ def run_solver(scenario_id: str, solve_for_shortest_path: bool | None):
     if "message" in response_data and response_data["message"] == "Scenario not found":
         raise ValueError("Scenario was not found for id.")
     scenario = Scenario.parse_obj(response_data)
-    return get_routing_solution(scenario, solve_for_shortest_path)
+    return get_routing_solution(scenario, solve_for_shortest_path, max_solv_time_in_sec)
 
 
 def run_main(scenario_id: str, car_routes):
