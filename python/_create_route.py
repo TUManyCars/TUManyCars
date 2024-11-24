@@ -99,11 +99,12 @@ def get_routing_solution(
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
     )
+    minimize_total_travel_time(routing, manager, locations)
+    # if solve_for_shortest_path:
+    #     minimize_total_travel_time(routing, manager, locations)
+    # else:
+    #     minimize_largest_end_time(routing)
     set_penalty_for_waiting_at_start(routing)
-    if solve_for_shortest_path:
-        minimize_total_travel_time(routing, manager, locations)
-    else:
-        minimize_largest_end_time(routing)
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (

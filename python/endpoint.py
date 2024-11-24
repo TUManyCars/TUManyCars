@@ -5,6 +5,7 @@ from typing import List
 from scenario_model import Scenario
 from main import run_main
 from initialise_scenario import init_scenario
+from typing import Optional
 
 app = FastAPI()
 
@@ -16,9 +17,8 @@ class Location(BaseModel):
 
 
 class RouteRequest(BaseModel):
-    scenario: Scenario
-    solve_for_shortest_path: bool | None
-    solve_for_shortest_max_time: bool | None
+    scenario_id: str
+    solve_for_shortest_path: Optional[bool] = False
 
 
 class RouteResponse(BaseModel):
@@ -39,6 +39,7 @@ def solve_routing(request: RouteRequest) -> RouteResponse:
     """
     # Validate input
     # scenario = init_scenario()
+    # print(request)
     run_main(request.scenario)
     return RouteResponse(
         time_algo_took_in_sec=12.5,
