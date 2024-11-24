@@ -2,10 +2,7 @@ from fastapi import FastAPI, HTTPException, BackgroundTasks
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import List
-import uuid
-from scenario_model import Scenario
 from main import run_main, run_solver
-from initialise_scenario import init_scenario
 from typing import Optional
 
 app = FastAPI()
@@ -46,10 +43,7 @@ def solve_routing(
             run_solver(request.scenario_id, request.solve_for_shortest_path)
         )
         if request.start_cars:
-            task_id = str(uuid.uuid4())
-            background_tasks.add_task(
-                run_main, request.scenario_id, car_routes, task_id
-            )
+            background_tasks.add_task(run_main, request.scenario_id, car_routes)
     except Exception as exc:
         print(str(exc))
         raise HTTPException(status_code=400, detail=str(exc))

@@ -97,7 +97,6 @@ def get_routing_solution(
     print(len(scenario.customers))
 
     number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 3)
-    print(number_of_customers_per_car)
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
     )
@@ -113,12 +112,13 @@ def get_routing_solution(
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
     search_parameters.first_solution_strategy = (
-        routing_enums_pb2.FirstSolutionStrategy.PARALLEL_CHEAPEST_INSERTION
+        routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
     )
     search_parameters.local_search_metaheuristic = (
-        routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
+        routing_enums_pb2.LocalSearchMetaheuristic.AUTOMATIC
     )
-    search_parameters.time_limit.seconds = 12
+    # GUIDED_LOCAL_SEARCH not good -> slow
+    search_parameters.time_limit.seconds = 4
     # search_parameters.log_search = True
     solution = routing.SolveWithParameters(search_parameters)
 
