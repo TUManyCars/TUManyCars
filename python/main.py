@@ -4,13 +4,15 @@ from patch_model import VehiclesUpdate, OneVehicleUpdate
 from initialise_scenario import init_scenario
 import time
 from _create_route import get_routing_solution
+import os
 
 
 def run_main(scenario_id: str):
     start_time = time.perf_counter()
-    get_url = f"http://host.docker.internal:8090/Scenarios/get_scenario/{scenario_id}"
+    host = os.environ.get('API_HOST', 'localhost')
+    get_url = f"http://{host}:8090/Scenarios/get_scenario/{scenario_id}"
     update_url = (
-        f"http://host.docker.internal:8090/Scenarios/update_scenario/{scenario_id}"
+        f"http://{host}:8090/Scenarios/update_scenario/{scenario_id}"
     )
     cars = VehiclesUpdate(vehicles=[])
 

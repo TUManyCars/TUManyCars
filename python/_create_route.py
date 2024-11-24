@@ -114,7 +114,7 @@ def get_routing_solution(
         routing_enums_pb2.LocalSearchMetaheuristic.GUIDED_LOCAL_SEARCH
     )
     search_parameters.time_limit.seconds = 12
-    search_parameters.log_search = True
+    search_parameters.log_search = False
     solution = routing.SolveWithParameters(search_parameters)
 
     # Display the solution
@@ -152,7 +152,7 @@ def get_routing_solution(
             car_routes[vehicle_id] = route
 
             # Print the route
-            print("\n".join(route_text))
+            #print("\n".join(route_text))
             print()  # Blank line between vehicle routes
 
         print(f"Total time for all routes: {total_time}")

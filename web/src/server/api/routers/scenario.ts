@@ -35,6 +35,9 @@ export const scenarioRouter = createTRPCRouter({
             },
           }
         );
+
+        console.log("aaaa");
+        console.log(host);
         
         if (createResponse.status !== 200) {
           throw new Error("Failed to create scenario");
@@ -77,7 +80,7 @@ export const scenarioRouter = createTRPCRouter({
         }
 
         const startTime = (launchResponse.data as { startTime: string }).startTime;
-        console.log("Scenario launched successfully");
+        console.log("Scenario launched successfullyy");
 
         // Step 4: Call Python calculation HTTP API endpoint
         const calculationResponse = await axios.post(
