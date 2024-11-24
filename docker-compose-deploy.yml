@@ -34,9 +34,6 @@ services:
       - backend
   fastapi:
     image: python:3.10-slim
-    working_dir: /python
-    volumes:
-      - ./python:/python  # Mount your local code directory
     ports:
       - "8086:8086"
     environment:
@@ -49,7 +46,12 @@ services:
       - POSTGRES_DB=tsi
       - FRONTEND_URL=http://frontend:9000
     command: >
-      bash -c "pip install fastapi uvicorn httpx sqlalchemy psycopg2-binary ortools pydantic requests &&
+      bash -c "apt-get update &&
+              apt-get install -y git &&
+              git clone https://github.com/TUManyCars/TUManyCars.git &&
+              cd TUManyCars &&
+              cd python &&
+              pip install fastapi uvicorn httpx sqlalchemy psycopg2-binary ortools pydantic requests &&
               uvicorn endpoint:app --host 0.0.0.0 --port 8086 --reload"
     depends_on:
       - backend
@@ -58,16 +60,18 @@ services:
       - frontend
   nextjs:
     image: node:22
-    working_dir: /web
-    volumes:
-      - ./web:/web
     ports:
       - "3000:3000"
     environment:
       - NODE_ENV=development
       - NEXT_PUBLIC_HOST=host.docker.internal
     command: >
-      bash -c "npm install &&
+      bash -c "apt-get update && 
+              apt-get install -y git
+              git clone https://github.com/TUManyCars/TUManyCars.git &&
+              cd TUManyCars &&
+              cd web &&
+              npm install &&
               npm run dev"
 
 networks:
