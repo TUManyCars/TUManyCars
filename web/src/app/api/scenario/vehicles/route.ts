@@ -1,6 +1,6 @@
 import axios from 'axios';
-import { NextRequest, NextResponse } from 'next/server';
-import Scenario from '~/types/Scenario';
+import { type NextRequest, NextResponse } from 'next/server';
+import type Scenario from '~/types/Scenario';
 
 /**
  * Fetches the vehicles for a given scenario ID.

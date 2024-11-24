@@ -5,6 +5,7 @@ import type Scenario from "~/types/Scenario";
 import Vehicle from "~/types/Vehicle";
 
 const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
+const ROUTE_PYTHON = `http://${host}:8086`;
 const ROUTE_API = `http://${host}:8080`;
 const ROUTE_RUNNER = `http://${host}:8090`;
 
@@ -78,7 +79,13 @@ export const scenarioRouter = createTRPCRouter({
         const startTime = (launchResponse.data as { startTime: string }).startTime;
         console.log("Scenario launched successfully");
 
-        // TODO: Call Python calculation HTTP API endpoint
+        // Step 4: Call Python calculation HTTP API endpoint
+        const calculationResponse = await axios.post(
+          ROUTE_PYTHON + "/solve-routing",
+          { scenario_id: scenario.id, solve_for_shortest_path: input.optimizationTarget === "sustainability" },
+        );
+
+        console.log("WORKED", calculationResponse);
 
         return {
           success: true,

@@ -40,7 +40,7 @@ def solve_routing(request: RouteRequest) -> RouteResponse:
     # Validate input
     # scenario = init_scenario()
     # print(request)
-    run_main(request.scenario)
+    run_main(request.scenario_id)
     return RouteResponse(
         time_algo_took_in_sec=12.5,
         overall_car_usage_in_sec=180,

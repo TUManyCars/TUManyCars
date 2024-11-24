@@ -6,21 +6,28 @@ import time
 from _create_route import get_routing_solution
 
 
-def run_main(scenario: Scenario):
+def run_main(scenario_id: str):
     start_time = time.perf_counter()
-    get_url = f"http://host.docker.internal:8090/Scenarios/get_scenario/{scenario.id}"
+    get_url = f"http://host.docker.internal:8090/Scenarios/get_scenario/{scenario_id}"
     update_url = (
-        f"http://host.docker.internal:8090/Scenarios/update_scenario/{scenario.id}"
+        f"http://host.docker.internal:8090/Scenarios/update_scenario/{scenario_id}"
     )
     cars = VehiclesUpdate(vehicles=[])
+
+    response = requests.get(get_url)
+    response_data = response.json()
+    if "message" in response_data and response_data["message"] == "Scenario not found":
+        raise ValueError("Scenario was not found for id.")
+    scenario = Scenario.parse_obj(response_data)
 
     car_routes, total_travel = get_routing_solution(scenario)
     while scenario.status != "COMPLETED":
         response = requests.get(get_url)
-        if response["messag€"] == "Scenario not found":
+        response_data = response.json()
+        if "message" in response_data and response_data["message"] == "Scenario not found":
             raise ValueError("Scenario was not found for id.")
 
-        scenario = Scenario.parse_obj(response.json())
+        scenario = Scenario.parse_obj(response_data)
         for i, car in enumerate(scenario.vehicles):
             if car.isAvailable:
                 if car_routes[i] != []:
