@@ -16,8 +16,8 @@ def get_customer_id_from_node(node):
 
 
 start_time = time.perf_counter()
-get_url = f"http://localhost:8090/Scenarios/get_scenario/{scenario.id}"
-update_url = f"http://localhost:8090/Scenarios/update_scenario/{scenario.id}"
+get_url = f"http://host.docker.internal:8090/Scenarios/get_scenario/{scenario.id}"
+update_url = f"http://host.docker.internal:8090/Scenarios/update_scenario/{scenario.id}"
 cars = VehiclesUpdate(vehicles=[])
 
 car_routes, total_travel = get_routing_solution(scenario)

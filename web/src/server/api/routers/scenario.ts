@@ -5,7 +5,7 @@ import type Scenario from "~/types/Scenario";
 import { observable } from '@trpc/server/observable';
 import Vehicle from "~/types/Vehicle";
 
-const ROUTE = "http://localhost:8080";
+const ROUTE = "http://host.docker.internal:8080";
 
 export const scenarioRouter = createTRPCRouter({
   setup: publicProcedure
@@ -24,7 +24,7 @@ export const scenarioRouter = createTRPCRouter({
       try {
         // Step 1: Create the scenario
         const createResponse = await axios.post(
-          "http://localhost:8080/scenario/create",
+          "http://host.docker.internal:8080/scenario/create",
           null,
           {
             params: {
@@ -56,7 +56,7 @@ export const scenarioRouter = createTRPCRouter({
 
         // Step 2: Initialize the scenario with modified JSON
         const initializeResponse = await axios.post(
-          "http://localhost:8090/Scenarios/initialize_scenario",
+          "http://host.docker.internal:8090/Scenarios/initialize_scenario",
           scenario
         );
 
@@ -67,7 +67,7 @@ export const scenarioRouter = createTRPCRouter({
 
         // Step 3: Launch the scenario
         const launchResponse = await axios.post(
-          `http://localhost:8090/Runner/launch_scenario/${scenario.id}?speed=${input.simulationSpeed}`
+          `http://host.docker.internal:8090/Runner/launch_scenario/${scenario.id}?speed=${input.simulationSpeed}`
         );
 
         if (launchResponse.status !== 200) {

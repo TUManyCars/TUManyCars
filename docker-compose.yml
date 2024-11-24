@@ -32,6 +32,42 @@ services:
     restart: no
     depends_on:
       - backend
+  fastapi:
+    image: python:3.10-slim
+    working_dir: /python
+    volumes:
+      - ./python:/python  # Mount your local code directory
+    ports:
+      - "8000:8000"
+    environment:
+      - BACKEND_URL=http://backend:8080
+      - SCENARIORUNNER_URL=http://scenariorunner:8090
+      - POSTGRES_HOST=postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_USER=user
+      - POSTGRES_PASSWORD=password
+      - POSTGRES_DB=tsi
+      - FRONTEND_URL=http://frontend:9000
+    command: >
+      bash -c "pip install fastapi uvicorn httpx sqlalchemy psycopg2-binary ortools pydantic requests &&
+              uvicorn endpoint:app --host 0.0.0.0 --port 8000 --reload"
+    depends_on:
+      - backend
+      - scenariorunner
+      - postgres
+      - frontend
+  nextjs:
+    image: node:22
+    working_dir: /web
+    volumes:
+      - ./web:/web
+    ports:
+      - "3000:3000"
+    environment:
+      - NODE_ENV=development
+    command: >
+      bash -c "npm install &&
+              npm run dev"
 
 networks:
   default:

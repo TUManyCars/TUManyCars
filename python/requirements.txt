@@ -1,4 +1,3 @@
 ortools 
-numpy
 fastapi
 pydantic
