@@ -96,7 +96,7 @@ def get_routing_solution(
 
     print(len(scenario.customers))
 
-    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.5)
+    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 3)
     print(number_of_customers_per_car)
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
