@@ -4,6 +4,7 @@ from pydantic import BaseModel
 from typing import List
 from scenario_model import Scenario
 from main import run_main
+from initialise_scenario import init_scenario
 
 app = FastAPI()
 
@@ -37,6 +38,7 @@ def solve_routing(request: RouteRequest) -> RouteResponse:
     Solves a simple routing problem (e.g., finding the order to visit locations).
     """
     # Validate input
+    # scenario = init_scenario()
     run_main(request.scenario)
     return RouteResponse(
         time_algo_took_in_sec=12.5,

@@ -83,6 +83,25 @@ def minimize_largest_end_time(routing: RoutingModel):
     return time_dimension
 
 
+def minimize_total_travel_time(
+    routing: RoutingModel, manager: RoutingIndexManager, locations
+):
+    """Set objective to minimize the total travel time."""
+
+    def time_callback(from_index, to_index):
+        """Returns the travel time between the two nodes."""
+        from_node = manager.IndexToNode(from_index)
+        to_node = manager.IndexToNode(to_index)
+        time = euclidean_distance(locations[from_node], locations[to_node])
+        return time
+
+    # Register the transit callback for travel time
+    time_callback_index = routing.RegisterTransitCallback(time_callback)
+
+    # Set cost of travel for each arc (from -> to)
+    routing.SetArcCostEvaluatorOfAllVehicles(time_callback_index)
+
+
 def set_penalty_for_waiting_at_start(routing: RoutingModel):
     def waiting_time_callback(from_index, _):
         """Return a penalty for waiting."""

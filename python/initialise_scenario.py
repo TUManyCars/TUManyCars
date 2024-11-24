@@ -8,7 +8,7 @@ def init_scenario(speed: float, n_cars: int = 5, n_customers: int = 10):
     # compose_file_path = Path(__file__).parent.parent / 'docker-compose.yml'
     # restart_and_wait_for_service(compose_file_path)
 
-    url1 = "http://host.docker.internal:8085/scenario/create"
+    url1 = "http://host.docker.internal:8080/scenario/create"
     params1 = {"numberOfVehicles": n_cars, "numberOfCustomers": n_customers}
     response = requests.post(url1, params=params1)
     scenario = Scenario.parse_obj(response.json())

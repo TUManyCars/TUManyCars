@@ -2,7 +2,7 @@ services:
   backend:
     image: mikechatzis/hackatumtsichallenge:backend
     ports:
-      - "8085:8080"
+      - "8080:8080"
     restart: no
     depends_on:
       - postgres
@@ -37,7 +37,7 @@ services:
     ports:
       - "8086:8086"
     environment:
-      - BACKEND_URL=http://backend:8085
+      - BACKEND_URL=http://backend:8080
       - SCENARIORUNNER_URL=http://scenariorunner:8090
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432

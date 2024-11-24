@@ -5,7 +5,7 @@ import type Scenario from "~/types/Scenario";
 import Vehicle from "~/types/Vehicle";
 
 const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
-const ROUTE_API = `http://${host}:8085`;
+const ROUTE_API = `http://${host}:8080`;
 const ROUTE_RUNNER = `http://${host}:8090`;
 
 export const scenarioRouter = createTRPCRouter({
