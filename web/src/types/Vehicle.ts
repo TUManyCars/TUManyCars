@@ -2,6 +2,10 @@ export default interface Vehicle {
   id: string;
   coordX: number;
   coordY: number;
+  realtimeX?: number;
+  realtimeY?: number;
+  targetX?: number;
+  targetY?: number;
   isAvailable: boolean;
   vehicleSpeed: number | null;
   customerId: string | null;

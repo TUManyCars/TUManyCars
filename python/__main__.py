@@ -5,7 +5,7 @@ from initialise_scenario import init_scenario
 import time
 from _create_route import get_routing_solution
 
-scenario, scenario_start_time = init_scenario(0.01, 5, 20)
+scenario, scenario_start_time = init_scenario(0.01, 5, 10)
 
 
 def get_customer_id_from_node(node):
@@ -18,7 +18,6 @@ def get_customer_id_from_node(node):
 start_time = time.perf_counter()
 get_url = f"http://localhost:8090/Scenarios/get_scenario/{scenario.id}"
 update_url = f"http://localhost:8090/Scenarios/update_scenario/{scenario.id}"
-currently_serviced = []
 cars = VehiclesUpdate(vehicles=[])
 
 car_routes, total_travel = get_routing_solution(scenario)
