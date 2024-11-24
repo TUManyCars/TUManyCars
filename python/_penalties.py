@@ -35,7 +35,7 @@ def create_time_dimension(
         fix_start_cumul_to_zero=True,
         name="Time",
     )
-    return routing.GetDimensionOrDie("Time")
+    return time_callback_index
 
 
 def add_pickup_delivery_constraints(routing: RoutingModel, pickup_delivery_pairs):
@@ -72,32 +72,17 @@ def add_max_overall_capacity_per_vehicle(
         True,  # Start cumul to zero
         "Capacity",
     )
-    capacity_dimension = routing.GetDimensionOrDie("Capacity")
-    return capacity_dimension
+    # capacity_dimension = routing.GetDimensionOrDie("Capacity")
 
 
 def minimize_largest_end_time(routing: RoutingModel):
     """Adds a time dimension and sets an objective to minimize the largest end time."""
     time_dimension = routing.GetDimensionOrDie("Time")
     time_dimension.SetGlobalSpanCostCoefficient(100)
-    return time_dimension
 
 
-def minimize_total_travel_time(
-    routing: RoutingModel, manager: RoutingIndexManager, locations
-):
+def minimize_total_travel_time(routing: RoutingModel, time_callback_index: int):
     """Set objective to minimize the total travel time."""
-
-    def time_callback(from_index, to_index):
-        """Returns the travel time between the two nodes."""
-        from_node = manager.IndexToNode(from_index)
-        to_node = manager.IndexToNode(to_index)
-        time = euclidean_distance(locations[from_node], locations[to_node])
-        return time
-
-    # Register the transit callback for travel time
-    time_callback_index = routing.RegisterTransitCallback(time_callback)
-
     # Set cost of travel for each arc (from -> to)
     routing.SetArcCostEvaluatorOfAllVehicles(time_callback_index)
 

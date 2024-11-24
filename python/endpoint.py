@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.responses import RedirectResponse
 from pydantic import BaseModel
 from typing import List
@@ -40,9 +40,15 @@ def solve_routing(request: RouteRequest) -> RouteResponse:
     # Validate input
     # scenario = init_scenario()
     # print(request)
-    run_main(request.scenario_id)
+    try:
+        (elapsed_time_algo, total_travel, max_car_travel_time) = run_main(
+            request.scenario_id, request.solve_for_shortest_path
+        )
+    except Exception as exc:
+        print(str(exc))
+        raise HTTPException(status_code=400, detail=str(exc))
     return RouteResponse(
-        time_algo_took_in_sec=12.5,
-        overall_car_usage_in_sec=180,
-        last_customer_at_destination_in_sec=7200,
+        time_algo_took_in_sec=elapsed_time_algo,
+        overall_car_usage_in_sec=total_travel,
+        last_customer_at_destination_in_sec=max_car_travel_time,
     )

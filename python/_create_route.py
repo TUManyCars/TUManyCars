@@ -15,6 +15,7 @@ import math
 from absl import logging
 
 logging.set_verbosity(logging.INFO)
+import time
 
 
 def get_list_of_customer_ids_from_nodes(
@@ -57,6 +58,7 @@ def get_list_of_customer_ids_from_nodes(
 def get_routing_solution(
     scenario: Scenario, solve_for_shortest_path: bool = False
 ) -> tuple[dict[int, list[int]], int]:
+    start_time = time.perf_counter()
     locations, precedence_pairs = process_customers(scenario)
 
     num_cars = len(scenario.vehicles)
@@ -81,7 +83,7 @@ def get_routing_solution(
     )
     routing = pywrapcp.RoutingModel(manager)
 
-    create_time_dimension(routing, manager, locations)
+    time_callback_index = create_time_dimension(routing, manager, locations)
 
     pickup_indices = []
     delivery_indices = []
@@ -94,16 +96,19 @@ def get_routing_solution(
 
     print(len(scenario.customers))
 
-    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.1)
+    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.5)
     print(number_of_customers_per_car)
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
     )
-    minimize_total_travel_time(routing, manager, locations)
+    # minimize_largest_end_time(routing)
+    minimize_total_travel_time(routing, time_callback_index)
+
     # if solve_for_shortest_path:
-    #     minimize_total_travel_time(routing, manager, locations)
-    # else:
     #     minimize_largest_end_time(routing)
+    # else:
+    #     minimize_total_travel_time(routing, time_callback_index)
+    #
     set_penalty_for_waiting_at_start(routing)
 
     search_parameters = pywrapcp.DefaultRoutingSearchParameters()
@@ -117,11 +122,14 @@ def get_routing_solution(
     search_parameters.log_search = False
     solution = routing.SolveWithParameters(search_parameters)
 
+    end_time = time.perf_counter()
+    elapsed_time = end_time - start_time
     # Display the solution
     if solution:
         car_routes = {}
         total_time = 0
         time_dimension = routing.GetDimensionOrDie("Time")
+        travel_time_per_car = []
 
         for vehicle_id in range(num_cars):
             index = routing.Start(vehicle_id)
@@ -134,6 +142,7 @@ def get_routing_solution(
                 route.append(node_index)
                 time_var = time_dimension.CumulVar(index)
                 route_text.append(f"Node {node_index} Time({solution.Min(time_var)})")
+                travel_time_per_car.append(solution.Min(time_var))
                 next_index = solution.Value(routing.NextVar(index))
                 if not routing.IsEnd(next_index):
                     # Calculate the travel time to the next node
@@ -152,14 +161,14 @@ def get_routing_solution(
             car_routes[vehicle_id] = route
 
             # Print the route
-            #print("\n".join(route_text))
+            # print("\n".join(route_text))
             print()  # Blank line between vehicle routes
 
         print(f"Total time for all routes: {total_time}")
         car_routes_with_ids = get_list_of_customer_ids_from_nodes(
             car_routes, locations, scenario
         )
-        return (car_routes_with_ids, total_time)
+        return (car_routes_with_ids, total_time, max(travel_time_per_car), elapsed_time)
     else:
         raise ValueError("No solution found.")
 
