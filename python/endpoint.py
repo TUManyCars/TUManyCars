@@ -40,6 +40,6 @@ def solve_routing(request: RouteRequest) -> RouteResponse:
     run_main(request.scenario)
     return RouteResponse(
         time_algo_took_in_sec=12.5,
-        overall_car_usage_in_min=180,
+        overall_car_usage_in_sec=180,
         last_customer_at_destination_in_sec=7200,
     )
