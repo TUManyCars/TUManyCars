@@ -20,6 +20,7 @@ class Location(BaseModel):
 class RouteRequest(BaseModel):
     scenario_id: str
     solve_for_shortest_path: Optional[bool] = False
+    start_cars: Optional[bool] = True
 
 
 class RouteResponse(BaseModel):
@@ -44,8 +45,11 @@ def solve_routing(
         (car_routes, total_travel_time, max_car_travel_time, elapsed_time_algo) = (
             run_solver(request.scenario_id, request.solve_for_shortest_path)
         )
-        task_id = str(uuid.uuid4())
-        background_tasks.add_task(run_main, request.scenario_id, car_routes, task_id)
+        if request.start_cars:
+            task_id = str(uuid.uuid4())
+            background_tasks.add_task(
+                run_main, request.scenario_id, car_routes, task_id
+            )
     except Exception as exc:
         print(str(exc))
         raise HTTPException(status_code=400, detail=str(exc))
