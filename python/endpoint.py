@@ -17,12 +17,12 @@ class Location(BaseModel):
 class RouteRequest(BaseModel):
     scenario: Scenario
     solve_for_shortest_path: bool | None
-    solve_for_shortest_time: bool | None
+    solve_for_shortest_max_time: bool | None
 
 
 class RouteResponse(BaseModel):
     time_algo_took_in_sec: float
-    overall_car_usage_in_min: int
+    overall_car_usage_in_sec: int
     last_customer_at_destination_in_sec: int
 
 
