@@ -37,14 +37,15 @@ services:
     ports:
       - "8086:8086"
     environment:
-      - BACKEND_URL=http://backend:8080
-      - SCENARIORUNNER_URL=http://scenariorunner:8090
+      - 8090_URL=http://ykgoko8sgg44o8o8gskcowcg.94.130.184.0.sslip.io:8090
+      - 8080_URL=http://ykgoko8sgg44o8o8gskcowcg.94.130.184.0.sslip.io:8090
+      # - 8090_URL=http://host.docker.internal:8090
+      # - 8080_URL=http://host.docker.internal:8090
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=user
       - POSTGRES_PASSWORD=password
       - POSTGRES_DB=tsi
-      - FRONTEND_URL=http://frontend:9000
     command: >
       bash -c "apt-get update &&
               apt-get install -y git &&
@@ -64,7 +65,8 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      - NEXT_PUBLIC_HOST=host.docker.internal
+      # - NEXT_PUBLIC_HOST=host.docker.internal
+      - NEXT_PUBLIC_HOST=ykgoko8sgg44o8o8gskcowcg.94.130.184.0.sslip.io
     command: >
       bash -c "apt-get update && 
               apt-get install -y git
