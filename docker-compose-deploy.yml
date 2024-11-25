@@ -38,7 +38,7 @@ services:
       - "8086:8086"
     environment:
       - 8090_URL=http://mustdoit.de:8090
-      - 8080_URL=http://mustdoit.de:8080
+      - 8080_URL=http://mustdoit.de:8085
       # - 8090_URL=http://host.docker.internal:8090
       # - 8080_URL=http://host.docker.internal:8080
       - POSTGRES_HOST=postgres
