@@ -110,7 +110,7 @@ export const scenarioRouter = createTRPCRouter({
         { 
           scenario_id: input.scenarioId, 
           solve_for_shortest_path: input.optimize === "sustainability",
-          return_to_hub: input.returnToHub,
+          go_to_hub: input.returnToHub,
           start_cars: true
         },
       );
