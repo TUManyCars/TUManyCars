@@ -13,7 +13,7 @@ def run_solver(
     max_solv_time_in_sec: int = 10,
 ):
     get_url = (
-        os.environ.get("8080_URL", "http://localhost:8080")
+        os.environ.get("8090_URL", "http://localhost:8090")
         + f"/Scenarios/get_scenario/{scenario_id}"
     )
 
@@ -29,7 +29,7 @@ def run_solver(
 def run_main(scenario_id: str, car_routes):
     start_time = time.perf_counter()
     get_url = (
-        os.environ.get("8080_URL", "http://localhost:8080")
+        os.environ.get("8090_URL", "http://localhost:8090")
         + f"/Scenarios/get_scenario/{scenario_id}"
     )
     update_url = (
