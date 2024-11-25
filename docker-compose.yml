@@ -41,7 +41,7 @@ services:
       - "8086:8086"
     environment:
       - 8090_URL=http://host.docker.internal:8090
-      - 8080_URL=http://host.docker.internal:8090
+      - 8080_URL=http://host.docker.internal:8080
       - POSTGRES_HOST=postgres
       - POSTGRES_PORT=5432
       - POSTGRES_USER=user
