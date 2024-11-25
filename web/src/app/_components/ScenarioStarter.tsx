@@ -21,7 +21,7 @@ export function ScenarioStarter() {
   const [showAdvanced, setShowAdvanced] = useState(false);
   const [customerCount, setCustomerCount] = useState(10);
   const [randomVehicleCount, setRandomVehicleCount] = useState(5);
-  const [simulationSpeed, setSimulationSpeed] = useState(1);
+  const [simulationSpeed, setSimulationSpeed] = useState(0.1);
   const [isStarting, setStarting] = useState(false);
 
   const router = useRouter();

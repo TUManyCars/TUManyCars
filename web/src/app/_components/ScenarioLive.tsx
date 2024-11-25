@@ -65,7 +65,7 @@ export function ScenarioLive({
 
   const startAnimation = useCallback(() => {
     const animate = () => {
-      const elapsedTimeSinceUpdate = ((Date.now() - lastUpdateTimeRef.current) / 1000) / (simulationSpeed * 2);
+      const elapsedTimeSinceUpdate = ((Date.now() - lastUpdateTimeRef.current) / 1000) / (simulationSpeed * 3);
 
       setVehicles(prevVehicles => 
         prevVehicles.map(vehicle => {

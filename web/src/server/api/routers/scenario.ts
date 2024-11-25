@@ -44,18 +44,7 @@ export const scenarioRouter = createTRPCRouter({
         const scenario = createResponse.data;
         console.log("Scenario created with ID:", scenario.id);
 
-        // Replace the positions of the last vehicles with custom positions
-        // const numCustomVehicles = input.customVehicles.length;
-        // const startIdx = scenario.vehicles.length - numCustomVehicles;
-
-        // for (let i = 0; i < numCustomVehicles; i++) {
-        //   const customVehicle = input.customVehicles[i]!;
-        //   const vehicleToUpdate = scenario.vehicles[startIdx + i];
-        //   if (vehicleToUpdate) {
-        //     vehicleToUpdate.coordX = customVehicle.coordX;
-        //     vehicleToUpdate.coordY = customVehicle.coordY;
-        //   }
-        // }
+        // Add custom vehicles to scenario
         scenario.vehicles.push(...input.customVehicles);
 
         if (input.startAtHub) {
