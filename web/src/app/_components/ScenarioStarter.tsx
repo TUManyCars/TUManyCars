@@ -185,6 +185,7 @@ export function ScenarioStarter() {
         <h1 className="mb-4 text-2xl font-bold">Click on the map to spawn vehicles</h1>
         <ClientMap 
           center={[48.13515, 11.5825]}
+          zoom={12}
           vehicles={vehicles}
           customers={[]}
           onMapClick={handleMapClick}

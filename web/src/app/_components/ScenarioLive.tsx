@@ -168,6 +168,7 @@ export function ScenarioLive({
       <div className="w-full h-[50vh]">
         <ClientMap 
           center={[48.13515, 11.5825]}
+          zoom={12}
           vehicles={vehicles}
           customers={customers}
         />
