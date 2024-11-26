@@ -65,8 +65,10 @@ services:
       - "3000:3000"
     environment:
       - NODE_ENV=development
-      # - NEXT_PUBLIC_HOST=host.docker.internal
-      - NEXT_PUBLIC_HOST=mustdoit.de
+      - ROUTE_NEXTJS=http://mustdoit.de:3000
+      - ROUTE_PYTHON=http://mustdoit.de:8086
+      - ROUTE_API=http://mustdoit.de:8085
+      - ROUTE_RUNNER=http://mustdoit.de:8090
     command: >
       bash -c "apt-get update && 
               apt-get install -y git

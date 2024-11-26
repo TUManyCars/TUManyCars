@@ -102,7 +102,7 @@ def get_routing_solution(
 
     print(len(scenario.customers))
 
-    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 2.4)
+    number_of_customers_per_car = math.ceil(len(scenario.customers) / num_cars * 3)
     add_max_overall_capacity_per_vehicle(
         routing, [number_of_customers_per_car] * num_cars
     )
@@ -118,11 +118,13 @@ def get_routing_solution(
     search_parameters.first_solution_strategy = (
         routing_enums_pb2.FirstSolutionStrategy.PATH_CHEAPEST_ARC
     )
+    
+    # Use simulated annealing for better local search
     search_parameters.local_search_metaheuristic = (
         routing_enums_pb2.LocalSearchMetaheuristic.AUTOMATIC
     )
     # GUIDED_LOCAL_SEARCH not good -> slow
-
+    
     # !!!!!!!! adjust -> thinks longer, but result is better
     search_parameters.time_limit.seconds = max_solv_time_in_sec
     # search_parameters.log_search = True

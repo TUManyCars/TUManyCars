@@ -50,7 +50,7 @@ def solve_routing(
                 request.scenario_id,
                 hub_coords,
                 request.solve_for_shortest_path,
-                10,
+                5,
             )
         )
         if request.start_cars:

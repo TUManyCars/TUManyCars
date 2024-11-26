@@ -2,7 +2,7 @@ import axios from 'axios';
 import { type NextRequest, NextResponse } from 'next/server';
 import type Scenario from '~/types/Scenario';
 
-const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
+const base_url = process.env.ROUTE_RUNNER ?? 'http://localhost:8090';
 
 /**
  * Fetches the vehicles for a given scenario ID.
@@ -13,7 +13,7 @@ const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
 async function fetchScenarioData(scenarioID: string): Promise<Scenario | null> {
   try {
     console.log('Updating data for scenario:', scenarioID);
-    const response = await axios.get<Scenario>(`http://${host}:8090/Scenarios/get_scenario/${scenarioID}`);
+    const response = await axios.get<Scenario>(`${base_url}/Scenarios/get_scenario/${scenarioID}`);
     const scenario = response.data;
     if (!scenario) {
       console.error('Scenario not found:', scenarioID);

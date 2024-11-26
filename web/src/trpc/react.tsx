@@ -10,7 +10,7 @@ import SuperJSON from "superjson";
 import { type AppRouter } from "~/server/api/root";
 import { createQueryClient } from "./query-client";
 
-const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
+const base_url_nextjs = process.env.ROUTE_NEXTJS ?? 'http://localhost:3000';
 
 let clientQueryClientSingleton: QueryClient | undefined = undefined;
 const getQueryClient = () => {
@@ -73,5 +73,5 @@ export function TRPCReactProvider(props: { children: React.ReactNode }) {
 
 function getBaseUrl() {
   if (typeof window !== "undefined") return window.location.origin;
-  return `http://${host}:${process.env.PORT ?? 3000}`;
+  return base_url_nextjs;
 }

@@ -5,10 +5,9 @@ import type Scenario from "~/types/Scenario";
 import Vehicle from "~/types/Vehicle";
 import CalculationResult from "~/types/CalculationResult";
 
-const host = process.env.NEXT_PUBLIC_HOST ?? 'localhost';
-const ROUTE_PYTHON = `http://${host}:8086`;
-const ROUTE_API = `http://${host}:8080`;
-const ROUTE_RUNNER = `http://${host}:8090`;
+const base_url_python = process.env.ROUTE_PYTHON ?? 'http://localhost:8086';
+const base_url_api = process.env.ROUTE_API ?? 'http://localhost:8080';
+const base_url_runner = process.env.ROUTE_RUNNER ?? 'http://localhost:8090';
 
 export const scenarioRouter = createTRPCRouter({
   setup: publicProcedure
@@ -27,11 +26,11 @@ export const scenarioRouter = createTRPCRouter({
       try {
         // Step 1: Create the scenario
         const createResponse = await axios.post<Scenario>(
-          ROUTE_API + "/scenario/create",
+          base_url_api + "/scenario/create",
           null,
           {
             params: {
-              numberOfVehicles: input.vehicleCount,
+              numberOfVehicles: input.vehicleCount + input.customVehicles.length,
               numberOfCustomers: input.customerCount,
             },
           }
@@ -44,8 +43,17 @@ export const scenarioRouter = createTRPCRouter({
         const scenario = createResponse.data;
         console.log("Scenario created with ID:", scenario.id);
 
-        // Add custom vehicles to scenario
-        scenario.vehicles.push(...input.customVehicles);
+        // Replace the positions of the last vehicles with custom positions
+        const numCustomVehicles = input.customVehicles.length;
+        const startIdx = scenario.vehicles.length - numCustomVehicles;
+        for (let i = 0; i < numCustomVehicles; i++) {
+          const customVehicle = input.customVehicles[i]!;
+          const vehicleToUpdate = scenario.vehicles[startIdx + i];
+          if (vehicleToUpdate) {
+            vehicleToUpdate.coordX = customVehicle.coordX;
+            vehicleToUpdate.coordY = customVehicle.coordY;
+          }
+        }
 
         if (input.startAtHub) {
           const hubX = 48.137371;
@@ -58,7 +66,7 @@ export const scenarioRouter = createTRPCRouter({
 
         // Step 2: Initialize the scenario with modified JSON
         const initializeResponse = await axios.post(
-          ROUTE_RUNNER + "/Scenarios/initialize_scenario",
+          base_url_runner + "/Scenarios/initialize_scenario",
           scenario
         );
 
@@ -69,7 +77,8 @@ export const scenarioRouter = createTRPCRouter({
 
         // Step 3: Launch the scenario
         const launchResponse = await axios.post(
-          `${ROUTE_RUNNER}/Runner/launch_scenario/${scenario.id}?speed=${input.simulationSpeed}`
+          `${base_url_runner}/Runner/launch_scenario/${scenario.id}?speed=${input.simulationSpeed}`,
+          null
         );
 
         if (launchResponse.status !== 200) {
@@ -96,7 +105,7 @@ export const scenarioRouter = createTRPCRouter({
       }),
     )
     .mutation(async ({ input }) => {
-      const { data } = await axios.post<CalculationResult>(ROUTE_PYTHON + "/solve-routing",
+      const { data } = await axios.post<CalculationResult>(base_url_python + "/solve-routing",
         { 
           scenario_id: input.scenarioId, 
           solve_for_shortest_path: input.optimize === "sustainability",

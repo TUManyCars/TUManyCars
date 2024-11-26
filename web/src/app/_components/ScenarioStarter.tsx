@@ -13,14 +13,14 @@ export function ScenarioStarter() {
   const [vehicles, setVehicles] = useState<Vehicle[]>([]);
 
   // Configuration options
-  const [optimizationTarget, setOptimizationTarget] = useState<OptimizeTarget>("sustainability");
+  const [optimizationTarget, setOptimizationTarget] = useState<OptimizeTarget>("customer_satisfaction");
   const [returnToHub, setReturnToHub] = useState(false);
   const [startAtHub, setStartAtHub] = useState(false);
   
   // Advanced options
   const [showAdvanced, setShowAdvanced] = useState(false);
-  const [customerCount, setCustomerCount] = useState(10);
-  const [randomVehicleCount, setRandomVehicleCount] = useState(5);
+  const [customerCount, setCustomerCount] = useState<number | null>(20);
+  const [randomVehicleCount, setRandomVehicleCount] = useState<number | null>(5);
   const [simulationSpeed, setSimulationSpeed] = useState(0.1);
   const [isStarting, setStarting] = useState(false);
 
@@ -57,8 +57,8 @@ export function ScenarioStarter() {
       optimizationTarget,
       returnToHub,
       startAtHub,
-      customerCount,
-      vehicleCount: vehicles.length + randomVehicleCount,
+      customerCount: customerCount ?? 1,
+      vehicleCount: vehicles.length + (randomVehicleCount ?? 0),
       customVehicles: vehicles,
       simulationSpeed
     });
@@ -144,9 +144,10 @@ export function ScenarioStarter() {
                   <label className="block text-sm font-medium">Amount of Customers</label>
                   <input
                     type="number"
-                    value={customerCount}
-                    onChange={(e) => setCustomerCount(Number(e.target.value))}
-                    min="1"
+                    value={customerCount ?? ''}
+                    onChange={(e) => {
+                      setCustomerCount(e.target.value === '' ? null : Number(e.target.value));
+                    }}
                     className="w-full p-2 border rounded-md text-black"
                   />
                   <p className="text-sm text-gray-400 italic">Will be randomly placed when simulation starts</p>
@@ -156,9 +157,10 @@ export function ScenarioStarter() {
                   <label className="block text-sm font-medium">Additional Random Cars</label>
                   <input
                     type="number"
-                    value={randomVehicleCount}
-                    onChange={(e) => setRandomVehicleCount(Number(e.target.value))}
-                    min="0"
+                    value={randomVehicleCount ?? ''}
+                    onChange={(e) => {
+                      setRandomVehicleCount(e.target.value === '' ? null : Number(e.target.value));
+                    }}
                     className="w-full p-2 border rounded-md text-black"
                   />
                   <p className="text-sm text-gray-400 italic">Will be randomly placed when simulation starts, in addition to the cars you put on the map yourself</p>
@@ -201,7 +203,7 @@ export function ScenarioStarter() {
           <div className="mt-6 flex justify-center">
             <button
               onClick={() => handleSubmit()}
-              disabled={vehicles.length + randomVehicleCount === 0}
+              disabled={vehicles.length + (randomVehicleCount ?? 0) === 0}
               className="bg-[#ea0a8e] text-white py-3 px-8 text-lg font-semibold rounded-md hover:bg-[#ea0a8db9] transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed min-w-[200px]"
             >
               {isStarting ? 'Starting...' : 'Start Simulation'}
@@ -212,4 +214,3 @@ export function ScenarioStarter() {
     </div>
   );
 }
-
